@@ -1,21 +1,3 @@
-# ==============================================================================
-# Created by https://gitignores.com/
-# COMPREHENSIVE FRAMEWORK TEMPLATE for Astro
-# Website: https://astro.build/
-# Repository: https://github.com/withastro/astro
-# ==============================================================================
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE OVERVIEW & USAGE NOTES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# • TEMPLATE TYPE: COMPREHENSIVE FRAMEWORK TEMPLATE
-# • PURPOSE: Complete Astro framework patterns for static site generation and build artifacts
-# • DESIGN PHILOSOPHY: Self-contained with all Astro-specific patterns
-# • COMBINATION GUIDANCE: Use standalone; optionally add IDE/OS templates
-# • SECURITY CONSIDERATIONS: Includes security patterns for .env files and credentials
-# • BEST PRACTICES: Review patterns before use, test with git check-ignore, customize for your project
-# • OFFICIAL SOURCES: Astro documentation and community best practices
-
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 # SECURITY & SENSITIVE DATA PROTECTION (ALWAYS FIRST!)
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
@@ -111,60 +93,8 @@ test-reports/
 test-results/
 testng-results.xml
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE CUSTOMIZATION & BEST PRACTICES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 1. REVIEW: Examine all patterns before use
-# 2. CUSTOMIZE: Adapt to your project's specific structure
-# 3. TEST: Use `git check-ignore` to verify patterns
-# 4. SECURE: Always protect sensitive data and credentials
-# 5. UPDATE: Review periodically as technology evolves
-
-# RECOMMENDED USAGE PATTERNS:
-# ==============================================================================
-#
-# BASIC USAGE (STANDALONE):
-# -------------------------
-# cp frameworks/astro.gitignore .gitignore
-#
-# WITH IDE SUPPORT:
-# ----------------
-# cat frameworks/astro.gitignore \
-#     ides/visual-studio-code.gitignore | sort -u > .gitignore
-#
-# CROSS-PLATFORM DEVELOPMENT:
-# ---------------------------
-# cat frameworks/astro.gitignore \
-#     os/linux.gitignore \
-#     os/macos.gitignore \
-#     os/windows.gitignore | sort -u > .gitignore
-#
-# IMPORTANT NOTES:
-# ==============================================================================
-# 1. This template is self-contained and includes security patterns
-# 2. No need to add common/security.gitignore separately
-# 3. Test with `git status --ignored` to ensure proper coverage
-
-# ==============================================================================
-# Created by https://gitignores.com/
-# OPERATING SYSTEM TEMPLATE for macOS
-# Website: https://www.apple.com/macos/
-# Repository: https://github.com/ronald2wing/.gitignores
-# ==============================================================================
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE OVERVIEW & USAGE NOTES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# • TEMPLATE TYPE: OPERATING SYSTEM TEMPLATE
-# • PURPOSE: macOS system files and OS-specific artifacts
-# • DESIGN PHILOSOPHY: Modular — combine with common templates
-# • COMBINATION GUIDANCE: Combine with language or framework templates
-# • SECURITY CONSIDERATIONS: No security patterns included — add common/security.gitignore
-# • BEST PRACTICES: Review and customize patterns before use; test with git check-ignore
-# • OFFICIAL SOURCES: macOS documentation and community best practices
-
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-# OS-SPECIFIC PATTERNS
+# MAC-OS-SPECIFIC PATTERNS
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 .apdisk
@@ -186,44 +116,8 @@ testng-results.xml
 Network\ Trash\ Folder/
 Temporary\ Items/
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE CUSTOMIZATION & BEST PRACTICES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 1. REVIEW: Examine all patterns before use
-# 2. CUSTOMIZE: Adapt to your project's specific structure
-# 3. TEST: Use `git check-ignore` to verify patterns
-# 4. SECURE: Always protect sensitive data and credentials
-# 5. UPDATE: Review periodically as technology evolves
-
-# Combine with language or framework templates as needed:
-
-# EXAMPLE COMBINATION:
-# cat languages/python.gitignore \
-#     common/security.gitignore \
-#     os/macos.gitignore \
-#     common/cache.gitignore | sort -u > .gitignore
-
-
-# ==============================================================================
-# Created by https://gitignores.com/
-# OPERATING SYSTEM TEMPLATE for Windows
-# Website: https://www.microsoft.com/windows/
-# Repository: https://github.com/ronald2wing/.gitignores
-# ==============================================================================
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE OVERVIEW & USAGE NOTES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# • TEMPLATE TYPE: OPERATING SYSTEM TEMPLATE
-# • PURPOSE: Windows system files and OS-specific artifacts
-# • DESIGN PHILOSOPHY: Modular — combine with common templates
-# • COMBINATION GUIDANCE: Combine with language or framework templates
-# • SECURITY CONSIDERATIONS: No security patterns included — add common/security.gitignore
-# • BEST PRACTICES: Review and customize patterns before use; test with git check-ignore
-# • OFFICIAL SOURCES: Windows documentation and community best practices
-
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-# OS-SPECIFIC PATTERNS
+# WINDOWS-OS-SPECIFIC PATTERNS
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 $RECYCLE.BIN/
@@ -242,44 +136,8 @@ Thumbs.db
 Thumbs.db:encryptable
 WerFault*.dmp
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE CUSTOMIZATION & BEST PRACTICES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 1. REVIEW: Examine all patterns before use
-# 2. CUSTOMIZE: Adapt to your project's specific structure
-# 3. TEST: Use `git check-ignore` to verify patterns
-# 4. SECURE: Always protect sensitive data and credentials
-# 5. UPDATE: Review periodically as technology evolves
-
-# Combine with language or framework templates as needed:
-
-# EXAMPLE COMBINATION:
-# cat languages/python.gitignore \
-#     common/security.gitignore \
-#     os/windows.gitignore \
-#     common/cache.gitignore | sort -u > .gitignore
-
-
-# ==============================================================================
-# Created by https://gitignores.com/
-# OPERATING SYSTEM TEMPLATE for Linux
-# Website: https://www.linux.org/
-# Repository: https://github.com/ronald2wing/.gitignores
-# ==============================================================================
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE OVERVIEW & USAGE NOTES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# • TEMPLATE TYPE: OPERATING SYSTEM TEMPLATE
-# • PURPOSE: Linux system files and OS-specific artifacts
-# • DESIGN PHILOSOPHY: Modular — combine with common templates
-# • COMBINATION GUIDANCE: Combine with language or framework templates
-# • SECURITY CONSIDERATIONS: No security patterns included — add common/security.gitignore
-# • BEST PRACTICES: Review and customize patterns before use; test with git check-ignore
-# • OFFICIAL SOURCES: Linux documentation and community best practices
-
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-# OS-SPECIFIC PATTERNS
+# LINUX-OS-SPECIFIC PATTERNS
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
 .#*
@@ -291,20 +149,3 @@ WerFault*.dmp
 .fuse_hidden*
 .Trash-*
 core.[0-9]*
-
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# TEMPLATE CUSTOMIZATION & BEST PRACTICES
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 1. REVIEW: Examine all patterns before use
-# 2. CUSTOMIZE: Adapt to your project's specific structure
-# 3. TEST: Use `git check-ignore` to verify patterns
-# 4. SECURE: Always protect sensitive data and credentials
-# 5. UPDATE: Review periodically as technology evolves
-
-# Combine with language or framework templates as needed:
-
-# EXAMPLE COMBINATION:
-# cat languages/python.gitignore \
-#     common/security.gitignore \
-#     os/linux.gitignore \
-#     common/cache.gitignore | sort -u > .gitignore
