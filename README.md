@@ -1,46 +1,25 @@
-# Astro Starter Kit: Basics
+# Splitta
 
-```sh
-npm create astro@latest -- --template basics
-```
+**Splitta** is a web app that helps you keep track of shared expenses with friends and family, making it easy to see who owes what to whom in a simple and transparent way.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Objective
 
-## 🚀 Project Structure
+To simplify the management of shared expenses by automatically tracking payments and balances between users, reducing confusion and making group finances transparent and easy to settle.
 
-Inside of your Astro project, you'll see the following folders and files:
+## How to start
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+1. Create an account or sign in  
+2. Create a group with friends or family  
+3. Add shared expenses (who paid, what for, and how it’s split)  
+4. View balances in real time  
+5. Settle debts when needed  
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Authors
 
-## 🧞 Commands
+- Gothloverino  
+- Mikbrog  
+- SadSuite  
 
-All commands are run from the root of the project, from a terminal:
+## License
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+This project is licensed under the MIT License.
