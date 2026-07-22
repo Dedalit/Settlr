@@ -1,25 +1,27 @@
 ---
-import '../styles/global.css'
-import { Button } from '@/components/ui/button'
-import DarkModeInit from '../components/DarkModeInit.astro'
+import "../styles/global.css";
+import { Button } from "@/components/ui/button";
+import DarkModeInit from "../components/DarkModeInit.astro";
 ---
 
 <html lang="en">
-  <head>
-    <DarkModeInit />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Settlr | Home</title>
-  </head>
-  <body>
-    <h1 class="flex justify-center items-center text-8xl font-bold relative top-90">SETTLR</h1>
-    <div class="flex items-center justify-center relative top-100">
-      <Button>
-      	<a href="/dashboard" class="">Let's do it</a>
+	<head>
+		<DarkModeInit />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Settlr | Home</title>
+	</head>
+	<body>
+		<h1
+			class="flex justify-center items-center text-8xl font-bold relative top-90"
+		>
+			SETTLR
+		</h1>
+		<div class="flex items-center justify-center relative top-100">
+			<Button>
+				<a href="/dashboard" class="">Let's do it</a>
 			</Button>
-    </div>
-  </body>
-</html>   
-
-
+		</div>
+	</body>
+</html>
