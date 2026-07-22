@@ -32,8 +32,12 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-[#0a071e] text-white">
-        {/* Passiamo i dati utente alla sidebar se necessario */}
-        <AppSidebar />
+
+        <AppSidebar 
+          userName={userName} 
+          userEmail={userEmail} 
+          userInitials={userInitials} 
+        />
         
         <SidebarInset className="bg-[#0a071e]">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-white/10 bg-[#110B3B]/40 backdrop-blur-xl px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -59,7 +63,6 @@ export default function DashboardLayout({
                 </Breadcrumb>
               </div>
 
-              {/* Profilo utente dinamico in alto a destra */}
               <div className="flex items-center gap-3">
                 <span className="text-xs text-purple-200/80 hidden sm:inline">{userName}</span>
                 <div className="size-8 rounded-full bg-linear-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xs font-bold text-white shadow-lg">
