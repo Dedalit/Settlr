@@ -2,6 +2,7 @@
 import '../styles/global.css'
 import { buttonVariants } from '@/components/ui/button'
 import { ArrowRight, Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent, Barcode, QrCode } from 'lucide-react'
+import DarkModeInit from '../components/DarkModeInit.astro'
 
 const icons = [Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent]
 const colors = [
@@ -27,17 +28,9 @@ const items = Array.from({ length: 14 }, (_, i) => ({
 }))
 ---
 
-<script is:inline>
-  const getTheme = () => (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  document.documentElement.classList[getTheme() === 'dark' ? 'add' : 'remove']('dark');
-  if (typeof localStorage !== 'undefined') {
-    new MutationObserver(() => localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'))
-      .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  }
-</script>
-
 <html lang="en">
   <head>
+    <DarkModeInit />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />

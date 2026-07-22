@@ -25,8 +25,13 @@ if (token_hash && type) {
 return Astro.redirect("/auth/signin");
 ---
 
+---
+import DarkModeInit from '../../components/DarkModeInit.astro'
+---
+
 <html>
   <head>
+    <DarkModeInit />
     <title>Email Confirmation</title>
   </head>
   <body>
