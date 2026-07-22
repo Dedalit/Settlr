@@ -1,6 +1,7 @@
 ---
 import { createClient } from "../../lib/supabase";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import Layout from "@/layouts/Layout.astro";
 
 const supabase = createClient({
   request: Astro.request,
@@ -25,16 +26,9 @@ if (token_hash && type) {
 return Astro.redirect("/auth/signin");
 ---
 
----
-import DarkModeInit from '../../components/DarkModeInit.astro'
----
-
-<html>
-  <head>
-    <DarkModeInit />
-    <title>Email Confirmation</title>
-  </head>
-  <body>
+<Layout title="Email Confirmation">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <p>Confirming your email...</p>
-  </body>
-</html>
+    </div>
+  </div>
+</Layout>
