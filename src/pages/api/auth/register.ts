@@ -10,6 +10,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const firstName = formData.get("firstName")?.toString();
   const lastName = formData.get("lastName")?.toString();
   const phone = formData.get("phone")?.toString();
+  const username = formData.get("username")?.toString();
 
   if (!email || !password || !firstName || !lastName) {
     return new Response(JSON.stringify({ success: false, message: "Tutti i campi obbligatori devono essere compilati." }), {
@@ -27,6 +28,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       data: {
         first_name: firstName,
         last_name: lastName,
+        username: username || "",
         phone: phone || "",
       },
     },

@@ -1,44 +1,107 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import '../../styles/global.css'
-import DashboardLayout from "@/components/dashboard-layout.tsx";
+export const prerender = false;
+import '@/styles/global.css';
+import { createClient } from "../../lib/supabase";
+import DashboardLayout from "@/layouts/Layout.astro";
+
+const supabase = createClient({ request: Astro.request, cookies: Astro.cookies });
+const { data: { user }, error } = await supabase.auth.getUser();
+
+if (error || !user) {
+  return Astro.redirect("/auth/signin");
+}
+
+const userEmail = user.email || "email@sconosciuta.com";
+
+// 1. Cerchiamo prima il nickname (username), poi nome e cognome, infine l'email
+const customUsername = user.user_metadata?.username;
+const firstName = user.user_metadata?.first_name || "";
+const lastName = user.user_metadata?.last_name || "";
+
+let userName = userEmail.split('@')[0]; // Fallback estremo
+
+if (customUsername && customUsername.trim() !== "") {
+  userName = customUsername; // Usiamo il nickname se l'utente lo ha inserito
+} else if (firstName || lastName) {
+  userName = `${firstName} ${lastName}`.trim(); // Altrimenti Nome e Cognome
+}
+
+// 2. Calcoliamo le iniziali per l'avatar basate sul nome scelto
+const userInitials = userName
+  .split(" ")
+  .map((n: string) => n[0])
+  .join("")
+  .toUpperCase()
+  .slice(0, 2);
 ---
 
-<script is:inline>
-	const getThemePreference = () => {
-		if (
-			typeof localStorage !== "undefined" &&
-			localStorage.getItem("theme")
-		) {
-			return localStorage.getItem("theme");
-		}
-		return window.matchMedia("(prefers-color-scheme: dark)").matches
-			? "dark"
-			: "light";
-	};
-	const isDark = getThemePreference() === "dark";
-	document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Settlr | Dashboard</title>
+  </head>
+  <body class="bg-[#0a071e] text-white antialiased min-h-screen">
+    
+    <!-- Passiamo i dati REALI dell'utente loggato al layout React -->
+    <DashboardLayout client:load userName={userName} userEmail={userEmail} userInitials={userInitials}>
+      <div class="max-w-6xl mx-auto space-y-6">
+        
+        <!-- Header principale dinamico -->
+        <div class="bg-[#110B3B]/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <!-- Avatar con le tue iniziali reali -->
+            <div class="size-16 rounded-full bg-linear-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-xl font-bold text-white shadow-lg">
+              {userInitials}
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-white">Benvenuto, {userName}!</h2>
+              <p class="text-xs text-purple-200/70 mt-0.5">{userEmail}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 w-full md:w-auto">
+            <button class="flex-1 md:flex-none bg-orange-600 hover:bg-orange-500 text-white font-semibold px-4 py-2 rounded-xl text-sm shadow-lg transition">
+              Add a bill
+            </button>
+            <button class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-xl text-sm shadow-lg transition">
+              Settle up
+            </button>
+          </div>
+        </div>
 
-	if (typeof localStorage !== "undefined") {
-		const observer = new MutationObserver(() => {
-			const isDark = document.documentElement.classList.contains("dark");
-			localStorage.setItem("theme", isDark ? "dark" : "light");
-		});
-		observer.observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: ["class"],
-		});
-	}
+        <!-- Griglia dei box delle spese -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="h-36 rounded-3xl bg-[#110B3B]/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col justify-between">
+            <span class="text-xs text-purple-200/60 uppercase tracking-wider font-semibold">Spese Totali</span>
+            <span class="text-2xl font-black text-white">$0.00</span>
+          </div>
+          <div class="h-36 rounded-3xl bg-[#110B3B]/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col justify-between">
+            <span class="text-xs text-purple-200/60 uppercase tracking-wider font-semibold">Ti devono</span>
+            <span class="text-2xl font-black text-emerald-400">$0.00</span>
+          </div>
+          <div class="h-36 rounded-3xl bg-[#110B3B]/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col justify-between">
+            <span class="text-xs text-purple-200/60 uppercase tracking-wider font-semibold">Devi dare</span>
+            <span class="text-2xl font-black text-orange-400">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Sezione transazioni vuota pronta per il database -->
+        <div class="h-96 rounded-3xl bg-[#110B3B]/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col items-center justify-center text-center">
+          <p class="text-sm font-semibold text-white">Nessuna spesa registrata</p>
+          <p class="text-xs text-purple-200/60 mt-1">Non appena collegherete il backend, qui comparirà la cronologia delle transazioni.</p>
+        </div>
+
+      </div>
+    </DashboardLayout>
+
+  </body>
+</html>
+
+<script>
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+      window.location.reload();
+    }
+  });
 </script>
-
-<Layout>
-  <!-- Hydrate the entire sidebar layout on the client -->
-  <DashboardLayout client:load>
-		<div class="grid auto-rows-min gap-4 md:grid-cols-3">
-			<div class="aspect-video rounded-xl bg-muted/50" />
-			<div class="aspect-video rounded-xl bg-muted/50" />
-			<div class="aspect-video rounded-xl bg-muted/50" />
-    </div>
-		<div class="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-  </DashboardLayout>
-</Layout>   

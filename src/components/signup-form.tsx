@@ -77,10 +77,10 @@ export function SignUpForm({
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0 pb-0">
-<form onSubmit={handleSubmit} className="px-1">
+          <form onSubmit={handleSubmit} className="px-1">
             {/* Griglia principale a 2 colonne con un piccolo spazio di sicurezza ai lati */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-              
+
               {/* Nome */}
               <Field>
                 <FieldLabel htmlFor="firstName" className="text-purple-100 text-xs">First Name</FieldLabel>
@@ -103,6 +103,18 @@ export function SignUpForm({
                   type="text"
                   placeholder="Rossi"
                   required
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-purple-400 h-9 text-sm w-full"
+                />
+              </Field>
+              
+              {/* Username */}  
+              <Field className="sm:col-span-2">
+                <FieldLabel htmlFor="username" className="text-purple-100 text-xs">Nickname / Username <span className="text-purple-300/75 text-[10px]">(Opzionale)</span></FieldLabel>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="es. NikTesla"
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-purple-400 h-9 text-sm w-full"
                 />
               </Field>
