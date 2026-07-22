@@ -1,8 +1,9 @@
 ---
 export const prerender = false;
 import '@/styles/global.css';
-import { createClient } from "../../lib/supabase";
+import { createClient } from "@/lib/supabase";
 import DashboardLayout from "@/components/dashboard-layout"; // Assicurati che il percorso corrisponda
+import Layout from '@/layouts/Layout.astro';
 
 const supabase = createClient({ request: Astro.request, cookies: Astro.cookies });
 const { data: { user }, error } = await supabase.auth.getUser();
@@ -31,13 +32,8 @@ const userInitials = userName
   .slice(0, 2);
 ---
 
-<html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Settlr | Dashboard</title>
-  </head>
-  <body class="bg-[#0a071e] text-white antialiased min-h-screen">
+<Layout>
+  <div class="bg-[#0a071e] text-white antialiased min-h-screen">
     
     <!-- NOTA FONDAMENTALE: client:only="react" impedisce l'SSR e fa partire tutto correttamente sul client -->
     <DashboardLayout 
@@ -94,9 +90,8 @@ const userInitials = userName
 
       </div>
     </DashboardLayout>
-
-  </body>
-</html>
+  </div>
+</Layout>
 
 <script>
   window.addEventListener('pageshow', function (event) {

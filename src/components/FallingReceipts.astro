@@ -1,0 +1,86 @@
+---
+import '@/styles/global.css'
+import { Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent, Barcode, QrCode } from 'lucide-react'
+
+const icons = [Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent]
+const colors = [
+  { icon: 'text-indigo-900', bar: 'bg-indigo-600', badge: 'bg-indigo-100 text-indigo-700' },
+  { icon: 'text-purple-900', bar: 'bg-purple-600', badge: 'bg-purple-100 text-purple-700' },
+  { icon: 'text-emerald-700', bar: 'bg-emerald-600', badge: 'bg-emerald-100 text-emerald-700' },
+  { icon: 'text-pink-700', bar: 'bg-pink-500', badge: 'bg-pink-100 text-pink-700' },
+  { icon: 'text-amber-800', bar: 'bg-amber-500', badge: 'bg-amber-100 text-amber-800' }
+]
+const speeds = ['1.8s', '2.5s', '3.2s', '4.0s', '5.2s']
+const items = Array.from({ length: 14 }, (_, i) => ({
+  type: i % 4,
+  Icon: icons[i % icons.length],
+  left: `${(i * 6.8) + 2}%`,
+  duration: speeds[i % speeds.length],
+  delay: `-${Math.random() * 6}s`,
+  rotDuration: `${6 + Math.random() * 6}s`,
+  rotDirection: Math.random() > 0.5 ? '360deg' : '-360deg',
+  scale: 1 + (i % 3) * 0.1,
+  ...colors[i % colors.length]
+}))
+---
+
+<div class="pointer-events-none fixed inset-0 z-20 overflow-hidden">
+  {items.map(({ type, Icon, left, duration, delay, rotDuration, rotDirection, scale, icon, bar, badge }) => (
+    <div class="falling-item" style={`left: ${left}; animation-duration: ${duration}; animation-delay: ${delay};`}>
+      <div class="receipt-card" style={`transform: scale(${scale}); animation-duration: ${rotDuration}; --rot-direction: ${rotDirection};`}>
+        
+        {type === 0 && (
+          <div class="flex flex-col items-center gap-1.5 w-20">
+            <Icon className={`size-7 ${icon}`} />
+            <div class="w-full h-1.5 bg-gray-200 rounded"></div>
+            <div class={`w-3/4 h-1.5 ${bar} rounded`}></div>
+            <div class="w-full h-1 bg-gray-200 rounded mt-1"></div>
+            <Barcode className="size-6 text-gray-400 mt-1" />
+          </div>
+        )}
+
+        {type === 1 && (
+          <div class="flex flex-col items-center gap-1.5 w-20">
+            <div class="flex items-center justify-between w-full">
+              <Icon className={`size-6 ${icon}`} />
+              <span class={`text-[9px] font-bold px-1.5 py-0.5 rounded ${badge}`}>$24.50</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1 w-full my-0.5">
+              <div class="h-1 bg-gray-200 rounded"></div>
+              <div class="h-1 bg-gray-300 rounded"></div>
+              <div class="h-1 bg-gray-300 rounded"></div>
+              <div class={`h-1 ${bar} rounded`}></div>
+            </div>
+            <QrCode className="size-6 text-gray-700" />
+          </div>
+        )}
+
+        {type === 2 && (
+          <div class="flex flex-col items-start gap-1.5 w-22">
+            <div class="flex items-center gap-2 w-full">
+              <CreditCard className={`size-6 ${icon}`} />
+              <div class={`w-8 h-1.5 ${bar} rounded`}></div>
+            </div>
+            <div class="w-full h-1 bg-gray-200 rounded"></div>
+            <div class="w-2/3 h-1 bg-gray-200 rounded"></div>
+            <div class="flex justify-between items-center w-full mt-1">
+              <div class="w-4 h-2 bg-amber-300 rounded-sm"></div>
+              <span class="text-[8px] font-mono text-gray-400">•••• 4242</span>
+            </div>
+          </div>
+        )}
+
+        {type === 3 && (
+          <div class="flex flex-col items-center gap-1 w-18">
+            <Icon className={`size-7 ${icon}`} />
+            <span class={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${badge} my-0.5`}>PAID</span>
+            <div class="w-full h-1 bg-gray-200 rounded"></div>
+            <div class="w-4/5 h-1 bg-gray-200 rounded"></div>
+            <div class={`w-full h-1.5 ${bar} rounded mt-1`}></div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  ))}
+</div>

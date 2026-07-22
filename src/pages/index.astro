@@ -1,8 +1,8 @@
 ---
-import '../styles/global.css'
+import '@/styles/global.css'
 import { buttonVariants } from '@/components/ui/button'
 import { ArrowRight, Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent, Barcode, QrCode } from 'lucide-react'
-import DarkModeInit from '../components/DarkModeInit.astro'
+import Layout from '@/layouts/Layout.astro'
 
 const icons = [Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent]
 const colors = [
@@ -28,15 +28,8 @@ const items = Array.from({ length: 14 }, (_, i) => ({
 }))
 ---
 
-<html lang="en">
-  <head>
-    <DarkModeInit />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Settlr | Home</title>
-  </head>
-  <body class="lavalamp-bg min-h-screen antialiased text-white overflow-hidden relative">
+<Layout>
+  <div class="lavalamp-bg min-h-screen antialiased text-white overflow-hidden relative">
     <div class="lava-blob blob-1"></div>
     <div class="lava-blob blob-2"></div>
 
@@ -120,8 +113,8 @@ const items = Array.from({ length: 14 }, (_, i) => ({
         </a>
       </div>
     </div>
-  </body>
-</html>
+  </div>
+</Layout>
 
 <style>
   .lavalamp-bg { background: linear-gradient(135deg, #7161EF, #3B2991, #1E1463, #4C32A8); background-size: 400% 400%; animation: gradientShift 12s ease infinite; }

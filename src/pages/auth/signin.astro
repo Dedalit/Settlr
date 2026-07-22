@@ -1,8 +1,9 @@
 ---
 import '@/styles/global.css'
-import { createClient } from "../../lib/supabase"
+import { createClient } from "@/lib/supabase"
 import { LoginForm } from "@/components/login-form"
 import { Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent, Barcode, QrCode } from 'lucide-react'
+import Layout from '@/layouts/Layout.astro'
 
 // Server-side authentication check
 const supabase = createClient({
@@ -41,23 +42,8 @@ const items = Array.from({ length: 14 }, (_, i) => ({
 }))
 ---
 
-<script is:inline>
-  const getTheme = () => (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  document.documentElement.classList[getTheme() === 'dark' ? 'add' : 'remove']('dark');
-  if (typeof localStorage !== 'undefined') {
-    new MutationObserver(() => localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'))
-      .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  }
-</script>
-
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Settlr | Sign In</title>
-  </head>
-  <body class="lavalamp-bg min-h-screen antialiased text-white overflow-hidden relative flex items-center justify-center">
+<Layout>
+  <div class="lavalamp-bg min-h-screen antialiased text-white overflow-hidden relative flex items-center justify-center">
     <div class="lava-blob blob-1"></div>
     <div class="lava-blob blob-2"></div>
 
@@ -136,8 +122,8 @@ const items = Array.from({ length: 14 }, (_, i) => ({
         <LoginForm client:load onSuccess={() => window.location.href = "/dashboard"} />
       </div>
     </div>
-  </body>
-</html>
+  </div>
+</Layout>
 
 <style>
   .lavalamp-bg { background: linear-gradient(135deg, #7161EF, #3B2991, #1E1463, #4C32A8); background-size: 400% 400%; animation: gradientShift 12s ease infinite; }
