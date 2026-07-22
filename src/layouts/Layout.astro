@@ -1,6 +1,7 @@
 ---
 import '@/styles/global.css'
 import DarkModeInit from '@/components/DarkModeInit.astro'
+import { ModeToggle } from '@/components/darkmode-toggle'
 ---
 
 <!doctype html>
@@ -14,5 +15,8 @@ import DarkModeInit from '@/components/DarkModeInit.astro'
 	</head>
 	<body>
 		<slot />
+		<div class="fixed bottom-5 right-5 z-50">
+			<ModeToggle client:load />
+		</div>
 	</body>
 </html>
