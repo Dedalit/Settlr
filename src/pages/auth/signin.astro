@@ -1,8 +1,7 @@
 ---
-import '@/styles/global.css'
 import { createClient } from "@/lib/supabase"
-import { LoginForm } from "@/components/login-form"
-import { Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent, Barcode, QrCode } from 'lucide-react'
+import { SignInForm } from "@/components/signin-form"
+import FallingReceipts from '@/components/FallingReceipts.astro'
 import Layout from '@/layouts/Layout.astro'
 
 // Server-side authentication check
@@ -13,102 +12,13 @@ const supabase = createClient({
 
 const { data } = await supabase.auth.getUser()
 
-// If user is already logged in, redirect to dashboard
 if (data?.user) {
   return Astro.redirect("/dashboard")
 }
-
-const icons = [Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent]
-const colors = [
-  { icon: 'text-indigo-900', bar: 'bg-indigo-600', badge: 'bg-indigo-100 text-indigo-700' },
-  { icon: 'text-purple-900', bar: 'bg-purple-600', badge: 'bg-purple-100 text-purple-700' },
-  { icon: 'text-emerald-700', bar: 'bg-emerald-600', badge: 'bg-emerald-100 text-emerald-700' },
-  { icon: 'text-pink-700', bar: 'bg-pink-500', badge: 'bg-pink-100 text-pink-700' },
-  { icon: 'text-amber-800', bar: 'bg-amber-500', badge: 'bg-amber-100 text-amber-800' }
-]
-
-const speeds = ['1.8s', '2.5s', '3.2s', '4.0s', '5.2s']
-
-const items = Array.from({ length: 14 }, (_, i) => ({
-  type: i % 4,
-  Icon: icons[i % icons.length],
-  left: `${(i * 6.8) + 2}%`,
-  duration: speeds[i % speeds.length],
-  delay: `-${Math.random() * 6}s`,
-  rotDuration: `${6 + Math.random() * 6}s`,
-  rotDirection: Math.random() > 0.5 ? '360deg' : '-360deg',
-  scale: 1 + (i % 3) * 0.1,
-  ...colors[i % colors.length]
-}))
 ---
 
 <Layout>
-  <div class="lavalamp-bg min-h-screen antialiased text-white overflow-hidden relative flex items-center justify-center">
-    <div class="lava-blob blob-1"></div>
-    <div class="lava-blob blob-2"></div>
-
-    <div class="pointer-events-none fixed inset-0 z-20 overflow-hidden">
-      {items.map(({ type, Icon, left, duration, delay, rotDuration, rotDirection, scale, icon, bar, badge }) => (
-        <div class="falling-item" style={`left: ${left}; animation-duration: ${duration}; animation-delay: ${delay};`}>
-          <div class="receipt-card" style={`transform: scale(${scale}); animation-duration: ${rotDuration}; --rot-direction: ${rotDirection};`}>
-            
-            {type === 0 && (
-              <div class="flex flex-col items-center gap-1.5 w-20">
-                <Icon className={`size-7 ${icon}`} />
-                <div class="w-full h-1.5 bg-gray-200 rounded"></div>
-                <div class={`w-3/4 h-1.5 ${bar} rounded`}></div>
-                <div class="w-full h-1 bg-gray-200 rounded mt-1"></div>
-                <Barcode className="size-6 text-gray-400 mt-1" />
-              </div>
-            )}
-
-            {type === 1 && (
-              <div class="flex flex-col items-center gap-1.5 w-20">
-                <div class="flex items-center justify-between w-full">
-                  <Icon className={`size-6 ${icon}`} />
-                  <span class={`text-[9px] font-bold px-1.5 py-0.5 rounded ${badge}`}>$24.50</span>
-                </div>
-                <div class="grid grid-cols-2 gap-1 w-full my-0.5">
-                  <div class="h-1 bg-gray-200 rounded"></div>
-                  <div class="h-1 bg-gray-300 rounded"></div>
-                  <div class="h-1 bg-gray-300 rounded"></div>
-                  <div class={`h-1 ${bar} rounded`}></div>
-                </div>
-                <QrCode className="size-6 text-gray-700" />
-              </div>
-            )}
-
-            {type === 2 && (
-              <div class="flex flex-col items-start gap-1.5 w-22">
-                <div class="flex items-center gap-2 w-full">
-                  <CreditCard className={`size-6 ${icon}`} />
-                  <div class={`w-8 h-1.5 ${bar} rounded`}></div>
-                </div>
-                <div class="w-full h-1 bg-gray-200 rounded"></div>
-                <div class="w-2/3 h-1 bg-gray-200 rounded"></div>
-                <div class="flex justify-between items-center w-full mt-1">
-                  <div class="w-4 h-2 bg-amber-300 rounded-sm"></div>
-                  <span class="text-[8px] font-mono text-gray-400">•••• 4242</span>
-                </div>
-              </div>
-            )}
-
-            {type === 3 && (
-              <div class="flex flex-col items-center gap-1 w-18">
-                <Icon className={`size-7 ${icon}`} />
-                <span class={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${badge} my-0.5`}>PAID</span>
-                <div class="w-full h-1 bg-gray-200 rounded"></div>
-                <div class="w-4/5 h-1 bg-gray-200 rounded"></div>
-                <div class={`w-full h-1.5 ${bar} rounded mt-1`}></div>
-              </div>
-            )}
-
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <!-- Contenitore della form in primo piano con effetto glassmorphism -->
+  <FallingReceipts>
     <div class="relative w-full max-w-md p-6 z-30 mx-auto">
       <div class="w-full bg-[#110B3B]/60 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl">
         <div class="text-center mb-6">
@@ -119,33 +29,8 @@ const items = Array.from({ length: 14 }, (_, i) => ({
           </a>
         </div>
         
-        <LoginForm client:load onSuccess={() => window.location.href = "/dashboard"} />
+        <SignInForm client:load onSuccess={() => window.location.href = "/dashboard"} />
       </div>
     </div>
-  </div>
+  </FallingReceipts>
 </Layout>
-
-<style>
-  .lavalamp-bg { background: linear-gradient(135deg, #7161EF, #3B2991, #1E1463, #4C32A8); background-size: 400% 400%; animation: gradientShift 12s ease infinite; }
-  .lava-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.55; pointer-events: none; z-index: 10; }
-  .blob-1 { top: 15%; left: 15%; width: 420px; height: 420px; background: #8B5CF6; animation: float1 14s ease-in-out infinite alternate; }
-  .blob-2 { bottom: 10%; right: 15%; width: 480px; height: 480px; background: #4F46E5; animation: float2 18s ease-in-out infinite alternate; }
-  
-  .receipt-card { background: #FFFFFF !important; border: 2px solid rgba(255, 255, 255, 0.9); padding: 14px 18px; border-radius: 16px; box-shadow: 0 20px 30px rgba(0, 0, 0, 0.35); display: flex; flex-direction: column; align-items: center; justify-content: center; animation: rotateItem linear infinite; }
-  .falling-item { position: absolute; top: -180px; will-change: transform; animation: fall linear infinite; }
-
-  @keyframes fall {
-    0% { transform: translateY(0vh); opacity: 0; }
-    10%, 90% { opacity: 1; }
-    100% { transform: translateY(125vh); opacity: 0; }
-  }
-
-  @keyframes rotateItem {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(var(--rot-direction, 360deg)); }
-  }
-
-  @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-  @keyframes float1 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(120px, -80px) scale(1.2); } 100% { transform: translate(-60px, 100px) scale(0.9); } }
-  @keyframes float2 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-100px, 90px) scale(1.1); } 100% { transform: translate(80px, -120px) scale(0.95); } }
-</style>

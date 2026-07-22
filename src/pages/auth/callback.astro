@@ -2,6 +2,7 @@
 import { createClient } from "../../lib/supabase";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import Layout from "@/layouts/Layout.astro";
+import FallingReceipts from "@/components/FallingReceipts.astro";
 
 const supabase = createClient({
   request: Astro.request,
@@ -26,9 +27,15 @@ if (token_hash && type) {
 return Astro.redirect("/auth/signin");
 ---
 
-<Layout title="Email Confirmation">
-  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <p>Confirming your email...</p>
+<Layout title="Email Confirm">
+  <FallingReceipts>
+    <div class="relative w-full max-w-md p-6 z-30 mx-auto">
+      <div class="w-full bg-[#110B3B]/60 backdrop-blur-xl border-0 p-8 rounded-3xl shadow-2xl text-white">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-black tracking-widest uppercase">SETTLR</h2>
+          <p id="status-text" class="text-xs text-purple-200/80 mt-2">Confirming your email...</p>
+        </div>
+      </div>
     </div>
-  </div>
+  </FallingReceipts>
 </Layout>
