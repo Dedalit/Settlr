@@ -30,6 +30,22 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/auth/signout", {
+        method: "POST",
+      })
+
+      if (response.ok) {
+
+        window.location.href = "/auth/signin"
+      }
+    } catch (error) {
+      console.error("Errore durante il logout:", error)
+    }
+  }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -72,35 +88,32 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <SparklesIcon
-                />
+                <SparklesIcon />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheckIcon
-                />
+                <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCardIcon
-                />
+                <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <BellIcon
-                />
+                <BellIcon />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon
-              />
+            
+            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+              <LogOutIcon />
               Log out
             </DropdownMenuItem>
+            
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
