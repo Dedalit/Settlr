@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { createClient } from "../../lib/supabase";
+import { createClient } from "../../../lib/supabase";
 
 export const POST: APIRoute = async ({ request, cookies, url }) => {
   const formData = await request.formData();
@@ -15,8 +15,7 @@ export const POST: APIRoute = async ({ request, cookies, url }) => {
   }
 
   const supabase = createClient({ request, cookies });
-  
-  // Genera l'URL di rimando dopo il click sull'email (puoi creare una pagina /auth/update-password se vuoi)
+
   const redirectTo = `${url.origin}/auth/update-password`;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
