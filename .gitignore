@@ -69,7 +69,6 @@ yarn-error.log*
 
 .my-app*
 /.changelog
-
 out/
 public/
 spec-reports
