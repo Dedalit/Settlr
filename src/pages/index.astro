@@ -1,25 +1,39 @@
 ---
 import '../styles/global.css'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { ArrowRight, Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent, Barcode, QrCode } from 'lucide-react'
+
+const icons = [Receipt, CreditCard, DollarSign, Tag, ShoppingBag, Percent]
+const colors = [
+  { icon: 'text-indigo-900', bar: 'bg-indigo-600', badge: 'bg-indigo-100 text-indigo-700' },
+  { icon: 'text-purple-900', bar: 'bg-purple-600', badge: 'bg-purple-100 text-purple-700' },
+  { icon: 'text-emerald-700', bar: 'bg-emerald-600', badge: 'bg-emerald-100 text-emerald-700' },
+  { icon: 'text-pink-700', bar: 'bg-pink-500', badge: 'bg-pink-100 text-pink-700' },
+  { icon: 'text-amber-800', bar: 'bg-amber-500', badge: 'bg-amber-100 text-amber-800' }
+]
+
+const speeds = ['1.8s', '2.5s', '3.2s', '4.0s', '5.2s']
+
+const items = Array.from({ length: 14 }, (_, i) => ({
+  type: i % 4,
+  Icon: icons[i % icons.length],
+  left: `${(i * 6.8) + 2}%`,
+  duration: speeds[i % speeds.length],
+  delay: `-${Math.random() * 6}s`,
+  rotDuration: `${6 + Math.random() * 6}s`,
+  rotDirection: Math.random() > 0.5 ? '360deg' : '-360deg',
+  scale: 1 + (i % 3) * 0.1,
+  ...colors[i % colors.length]
+}))
 ---
 
 <script is:inline>
-	const getThemePreference = () => {
-		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-			return localStorage.getItem('theme');
-		}
-		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-	};
-	const isDark = getThemePreference() === 'dark';
-	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
- 
-	if (typeof localStorage !== 'undefined') {
-		const observer = new MutationObserver(() => {
-			const isDark = document.documentElement.classList.contains('dark');
-			localStorage.setItem('theme', isDark ? 'dark' : 'light');
-		});
-		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-	}
+  const getTheme = () => (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.classList[getTheme() === 'dark' ? 'add' : 'remove']('dark');
+  if (typeof localStorage !== 'undefined') {
+    new MutationObserver(() => localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'))
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
 </script>
 
 <html lang="en">
@@ -29,14 +43,114 @@ import { Button } from '@/components/ui/button'
     <meta name="generator" content={Astro.generator} />
     <title>Settlr | Home</title>
   </head>
-  <body>
-    <h1 class="flex justify-center items-center text-8xl font-bold relative top-90">SETTLR</h1>
-    <div class="flex items-center justify-center relative top-100">
-      <Button>
-      	<a href="/dashboard" class="">Let's do it</a>
-			</Button>
+  <body class="lavalamp-bg min-h-screen antialiased text-white overflow-hidden relative">
+    <div class="lava-blob blob-1"></div>
+    <div class="lava-blob blob-2"></div>
+
+    <div class="pointer-events-none fixed inset-0 z-20 overflow-hidden">
+      {items.map(({ type, Icon, left, duration, delay, rotDuration, rotDirection, scale, icon, bar, badge }) => (
+        <div class="falling-item" style={`left: ${left}; animation-duration: ${duration}; animation-delay: ${delay};`}>
+          <div class="receipt-card" style={`transform: scale(${scale}); animation-duration: ${rotDuration}; --rot-direction: ${rotDirection};`}>
+            
+            {type === 0 && (
+              <div class="flex flex-col items-center gap-1.5 w-20">
+                <Icon class={`size-7 ${icon}`} />
+                <div class="w-full h-1.5 bg-gray-200 rounded"></div>
+                <div class={`w-3/4 h-1.5 ${bar} rounded`}></div>
+                <div class="w-full h-1 bg-gray-200 rounded mt-1"></div>
+                <Barcode class="size-6 text-gray-400 mt-1" />
+              </div>
+            )}
+
+            {type === 1 && (
+              <div class="flex flex-col items-center gap-1.5 w-20">
+                <div class="flex items-center justify-between w-full">
+                  <Icon class={`size-6 ${icon}`} />
+                  <span class={`text-[9px] font-bold px-1.5 py-0.5 rounded ${badge}`}>$24.50</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1 w-full my-0.5">
+                  <div class="h-1 bg-gray-200 rounded"></div>
+                  <div class="h-1 bg-gray-300 rounded"></div>
+                  <div class="h-1 bg-gray-300 rounded"></div>
+                  <div class={`h-1 ${bar} rounded`}></div>
+                </div>
+                <QrCode class="size-6 text-gray-700" />
+              </div>
+            )}
+
+            {type === 2 && (
+              <div class="flex flex-col items-start gap-1.5 w-22">
+                <div class="flex items-center gap-2 w-full">
+                  <CreditCard class={`size-6 ${icon}`} />
+                  <div class={`w-8 h-1.5 ${bar} rounded`}></div>
+                </div>
+                <div class="w-full h-1 bg-gray-200 rounded"></div>
+                <div class="w-2/3 h-1 bg-gray-200 rounded"></div>
+                <div class="flex justify-between items-center w-full mt-1">
+                  <div class="w-4 h-2 bg-amber-300 rounded-sm"></div>
+                  <span class="text-[8px] font-mono text-gray-400">•••• 4242</span>
+                </div>
+              </div>
+            )}
+
+            {type === 3 && (
+              <div class="flex flex-col items-center gap-1 w-18">
+                <Icon class={`size-7 ${icon}`} />
+                <span class={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${badge} my-0.5`}>PAID</span>
+                <div class="w-full h-1 bg-gray-200 rounded"></div>
+                <div class="w-4/5 h-1 bg-gray-200 rounded"></div>
+                <div class={`w-full h-1.5 ${bar} rounded mt-1`}></div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-6 text-center max-w-4xl mx-auto z-30">
+      <div class="relative">
+        <div class="absolute -inset-2 rounded-2xl bg-gradient-to-r from-purple-400 via-indigo-300 to-pink-400 opacity-40 blur-3xl"></div>
+        <h1 class="relative text-7xl sm:text-8xl md:text-[10rem] font-black tracking-tight drop-shadow-2xl text-transparent bg-clip-text bg-gradient-to-b from-white via-white/95 to-purple-200/80 uppercase">
+          SETTLR
+        </h1>
+      </div>
+
+      <p class="mt-6 text-lg sm:text-xl text-purple-100/90 max-w-lg font-normal leading-relaxed drop-shadow">
+        Split bills, track shared expenses, and settle up with friends in seconds.
+      </p>
+
+      <div class="mt-10">
+        <a href="/dashboard" class={buttonVariants({ size: "lg", className: "group bg-[#110B3B] hover:bg-[#110B3B]/90 text-white font-semibold px-9 py-7 text-lg rounded-full border border-white/20 backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-3" })}>
+          Let's do it
+          <ArrowRight class="size-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+        </a>
+      </div>
     </div>
   </body>
-</html>   
+</html>
 
+<style>
+  .lavalamp-bg { background: linear-gradient(135deg, #7161EF, #3B2991, #1E1463, #4C32A8); background-size: 400% 400%; animation: gradientShift 12s ease infinite; }
+  .lava-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.55; pointer-events: none; z-index: 10; }
+  .blob-1 { top: 15%; left: 15%; width: 420px; height: 420px; background: #8B5CF6; animation: float1 14s ease-in-out infinite alternate; }
+  .blob-2 { bottom: 10%; right: 15%; width: 480px; height: 480px; background: #4F46E5; animation: float2 18s ease-in-out infinite alternate; }
+  
+  .receipt-card { background: #FFFFFF !important; border: 2px solid rgba(255, 255, 255, 0.9); padding: 14px 18px; border-radius: 16px; box-shadow: 0 20px 30px rgba(0, 0, 0, 0.35); display: flex; flex-direction: column; align-items: center; justify-content: center; animation: rotateItem linear infinite; }
+  .falling-item { position: absolute; top: -180px; will-change: transform; animation: fall linear infinite; }
 
+  @keyframes fall {
+    0% { transform: translateY(0vh); opacity: 0; }
+    10%, 90% { opacity: 1; }
+    100% { transform: translateY(125vh); opacity: 0; }
+  }
+
+  @keyframes rotateItem {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(var(--rot-direction, 360deg)); }
+  }
+
+  @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  @keyframes float1 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(120px, -80px) scale(1.2); } 100% { transform: translate(-60px, 100px) scale(0.9); } }
+  @keyframes float2 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-100px, 90px) scale(1.1); } 100% { transform: translate(80px, -120px) scale(0.95); } }
+</style>
