@@ -12,13 +12,10 @@
 *_keys
 *_secrets
 *_tokens
-.env.*
-.env.*.local
-.env.local
+.env*
 id_dsa
 id_rsa
 !.env.example
-!.env
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 # BUILD ARTIFACTS & DISTRIBUTION
@@ -42,6 +39,8 @@ dist/
 .yarn/versions/
 build/
 node_modules/
+.astro/
+.vscode/settings.json
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 # DEVELOPMENT & RUNTIME ARTIFACTS
@@ -70,7 +69,6 @@ yarn-error.log*
 .my-app*
 /.changelog
 out/
-public/
 spec-reports
 template/src/__tests__/__snapshots__/
 
@@ -80,7 +78,6 @@ template/src/__tests__/__snapshots__/
 
 .coverage
 .coverage.*
-.coverage.xml
 .coverage_html/
 .nyc_output/
 coverage-reports
