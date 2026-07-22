@@ -3,82 +3,88 @@
 ## Commands
 
 ```bash
-pnpm dev      # astro dev (defaults to localhost:4321)
-pnpm build    # astro build (SSR standalone output)
-pnpm preview  # astro preview (run production build locally)
+pnpm dev       # astro dev (localhost:4321)
+pnpm build     # astro build (SSR standalone → dist/)
+pnpm preview   # astro preview (run production build)
+pnpm astro     # raw astro CLI passthrough
 ```
 
-There is no lint, typecheck, or test command configured.
+No lint, typecheck, or test commands exist.
 
 ## Stack
 
-- **Astro 7** — SSR mode (`output: "server"`) with Node adapter in standalone mode
-- **React 19** — islands hydrated with `client:load`; `.astro` files server-render, `.tsx` files are interactive islands
-- **Tailwind CSS v4** — via `@tailwindcss/vite` plugin, not PostCSS
-- **shadcn/ui** — built on **Base UI** primitives (not Radix); components in `src/components/ui/`
-- **Supabase SSR** — auth handled via `@supabase/ssr` with cookie-based sessions (HttpOnly, SameSite=Lax)
-- **pnpm** — package manager (pnpm-workspace.yaml present); a stale `package-lock.json` also exists
+- **Astro 7** — `output: "server"`, Node adapter in `standalone` mode
+- **React 19** — `.tsx` islands hydrated with `client:load`; `.astro` files are server-only
+- **Tailwind CSS v4** — via `@tailwindcss/vite` plugin (not PostCSS)
+- **shadcn/ui** — built on **Base UI** (not Radix); components in `src/components/ui/`
+- **Supabase SSR** — `@supabase/ssr` with cookie-based sessions (HttpOnly, SameSite=Lax)
+- **pnpm** — package manager; a stale `package-lock.json` exists, ignore it
 - **Node >= 22.12.0** required
 
-## Path aliases
+## Path alias
 
-`@/` maps to `src/` (defined in tsconfig.json `paths`).
+`@/` → `src/` (tsconfig.json `paths`).
 
-## Environment variables
+## Environment
 
 | Variable | Purpose |
 |---|---|
 | `PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase anon key |
 
-All env vars are `PUBLIC_` prefixed (Astro convention for client-accessible vars). Copy `.env.example` to `.env` and fill values. Do NOT commit `.env` or `.env.local` (both are gitignored).
+Copy `.env.example` → `.env`. Both `.env` and `.env.local` exist and are redundant (`.env` wins).
+All env vars are Astro `PUBLIC_`-prefixed. Do NOT commit `.env` or `.env.local`.
 
-## Architecture
+## Routing & pages
 
-### Routing (Astro file-based)
+- `src/pages/` — Astro file-based routing
+- `src/pages/api/` — API endpoints (`APIRoute` handlers), return JSON
+- `src/layouts/Layout.astro` — shared shell (`<html>`, head, body, `<slot />`); used by **all** pages
+- `src/components/FallingReceipts.astro` — reusable lavalamp background with falling receipt animations; wraps content via `<slot />` and emits global CSS + keyframes via `<style is:global>`
 
-- `src/pages/` — routes mapped by filename
-- `src/pages/api/` — API endpoints (`APIRoute` handlers)
-- `src/layouts/Layout.astro` — shared base layout (not used by `index.astro` or `about.astro`)
+Page inventory: `index.astro`, `auth/signin.astro`, `auth/signup.astro`, `auth/forgot-password.astro`, `auth/update-password.astro`, `auth/callback.astro`, `dashboard/index.astro`.
 
-### Auth flow
+## Auth
 
-Auth is centralized in `src/middleware.js`:
+Centralized in `src/middleware.js`:
 
-1. Public routes (`/`, `/about`, `/auth/*`, `/api/auth/*`) bypass auth checks
-2. All other routes check for a valid Supabase session via `supabase.auth.getUser()`
-3. Unauthenticated users redirect to `/auth/signin?redirect=<path>`
-4. Authenticated `user` object attached to `context.locals.user`
+1. Public routes bypass check: `/`, `/about`, `/auth/*`, `/api/auth/*`, static assets
+2. All other routes require a valid Supabase session via `supabase.auth.getUser()`
+3. Unauthenticated → redirect to `/auth/signin?redirect=<path>`
+4. Authenticated `user` attached to `context.locals.user`
 
-Two auth paths coexist (some redundancy):
+Two auth paths coexist (redundant):
+- **Astro Actions** (`src/actions/index.ts`) — `signUp`, `signIn`, `signOut`
+- **API Routes** (`src/pages/api/auth/*.ts`) — form-based signin, register, signout, forgot-password, update-password
 
-- **Astro Actions** (`src/actions/index.ts`) — `signUp`, `signIn`, `signOut` via `astro:actions`
-- **API Routes** (`src/pages/api/auth/*.ts`) — form-based signin/register/signout endpoints
+Email confirmation: `/auth/callback?token_hash=...&type=email` → verify OTP → redirect.
 
-Email confirmation flow: `/auth/callback?token_hash=...&type=email` → server-side OTP verification → redirect.
+Password reset flow: `forgot-password` (enter email) → API sends link → `update-password` (set new password with recovery token).
 
-### Server-side Supabase client (`src/lib/supabase.ts`)
+### Server-side Supabase client
 
-Uses `@supabase/ssr`'s `createServerClient`. Import this in any server-side context (middleware, page frontmatter, API routes). The `cookies` parameter varies by context — in middleware it's `context.cookies`, in API routes it's `Astro.cookies`.
-
-## Components
-
-- **Application components** — `src/components/*.tsx` (app-sidebar, login-form, dashboard-shell, nav-*, team-switcher, ModeToggle)
-- **shadcn UI primitives** — `src/components/ui/*.tsx` (button, card, sheet, sidebar, dropdown-menu, etc.)
-- **Custom hook** — `src/hooks/use-mobile.ts` for responsive sidebar behavior
-
-Use `cn()` from `@/lib/utils` (re-exported `clsx` + `tailwind-merge`) to merge Tailwind classes.
+`src/lib/supabase.ts` — wraps `@supabase/ssr`'s `createServerClient`. Import in middleware, page frontmatter, or API routes. `cookies` parameter is `context.cookies` in middleware, `Astro.cookies` in pages & API routes.
 
 ## Dark mode
 
-Managed via `.dark` class on `<html>`. Inline script in `index.astro` and `dashboard.astro` reads from `localStorage.getItem('theme')` or `matchMedia('(prefers-color-scheme: dark)')`. The `ModeToggle.tsx` React component provides light/dark/system switching.
+- **Init**: `DarkModeInit.astro` (inline `<script>` in `<head>`) reads `localStorage` / `prefers-color-scheme`, sets `.dark` class on `<html>`, persists changes back to localStorage via `MutationObserver`.
+- **Toggle**: `ModeToggle` React component (`src/components/darkmode-toggle.tsx`) — dropdown with Light/Dark/System. Rendered in `Layout.astro` body, fixed bottom-right (`z-50`). Hydrated with `client:load`.
+- All dark-mode CSS is driven by the `.dark` class on `<html>` with Tailwind v4's `@custom-variant dark (&:is(.dark *))`.
 
-## Supabase local development
+## Components
 
-`supabase/config.toml` is configured for local dev (ports 54321–54324). Run `supabase start` for local Supabase services. Auth email confirmations are disabled locally (`enable_confirmations = false`) but emails go to Inbucket at `http://127.0.0.1:54324`.
+- **App components** — `src/components/*.tsx` (login-form, signup-form, dashboard-shell, app-sidebar, nav-*, team-switcher, darkmode-toggle)
+- **shadcn/ui primitives** — `src/components/ui/*.tsx` (button, card, sheet, sidebar, dropdown-menu, etc.)
+- **Custom hooks** — `src/hooks/use-mobile.ts` (responsive sidebar)
+- Use `cn()` from `@/lib/utils` (`clsx` + `tailwind-merge`) to merge Tailwind classes
+
+## Supabase local dev
+
+`supabase/config.toml` — ports 54321–54324. Run `supabase start`. Auth email confirmations disabled locally; emails go to Inbucket at `http://127.0.0.1:54324`.
 
 ## Known quirks
 
-- `src/pages/dashboard.astro` and `src/pages/dashboard/index.astro` are functionally identical — only one is needed
 - Both `.env` and `.env.local` exist and are redundant (`.env` takes precedence in dev)
-- shadcn CLI (`npx shadcn add`) is configured via `components.json`; use it to add more UI components — custom components live in the same `@/components/ui` directory
+- `pnpm astro` is how you run the Astro CLI directly (e.g., `pnpm astro add`, `pnpm astro check`)
+- shadcn CLI (`npx shadcn add`) is configured via `components.json`; custom components live in the same `@/components/ui` directory
+- `FallingReceipts.astro` emits global CSS via `<style is:global>` — the lavalamp/bg classes are available everywhere without per-page `<style>` blocks
