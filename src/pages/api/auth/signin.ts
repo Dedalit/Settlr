@@ -1,24 +1,31 @@
 // With `output: 'static'` configured:
 // export const prerender = false;
 import type { APIRoute } from "astro";
-import { supabase } from "../../../lib/supabase";
+import { createClient } from "../../../lib/supabase";
 
-export const POST: APIRoute = async ({ request, cookies, redirect }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   const formData = await request.formData();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
 
   if (!email || !password) {
-    return new Response("Email and password are required", { status: 400 });
+    return new Response(JSON.stringify({ success: false, message: "Email and password are required" }), {
+      status: 400,
+      headers: { "content-type": "application/json" },
+    });
   }
 
+  const supabase = createClient({ request, cookies });
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
-    return new Response(error.message, { status: 500 });
+    return new Response(JSON.stringify({ success: false, message: error.message }), {
+      status: 401,
+      headers: { "content-type": "application/json" },
+    });
   }
 
   const { access_token, refresh_token } = data.session;
@@ -28,5 +35,9 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   cookies.set("sb-refresh-token", refresh_token, {
     path: "/",
   });
-  return redirect("/dashboard");
+
+  return new Response(JSON.stringify({ success: true, message: "Signed in successfully" }), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
 };

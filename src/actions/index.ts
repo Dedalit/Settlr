@@ -2,6 +2,27 @@ import { defineAction } from "astro:actions";
 import { z } from "astro/zod";
 import { createClient } from "../lib/supabase";
 
+function persistSession(cookies: { set: (name: string, value: string, options: Record<string, unknown>) => void }, session: { access_token: string; refresh_token: string }) {
+  const isSecure = import.meta.env.PROD;
+  cookies.set("sb-access-token", session.access_token, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: isSecure,
+  });
+  cookies.set("sb-refresh-token", session.refresh_token, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: isSecure,
+  });
+}
+
+function clearSession(cookies: { delete: (name: string, options?: Record<string, unknown>) => void }) {
+  cookies.delete("sb-access-token", { path: "/" });
+  cookies.delete("sb-refresh-token", { path: "/" });
+}
+
 export const server = {
   signUp: defineAction({
     accept: "form",
@@ -16,12 +37,9 @@ export const server = {
           cookies: context.cookies,
         });
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: input.email,
           password: input.password,
-          options: {
-            emailRedirectTo: "http://localhost:4321/auth/callback",
-          },
         });
 
         if (error) {
@@ -29,6 +47,10 @@ export const server = {
             success: false,
             message: error.message,
           };
+        }
+
+        if (data.session) {
+          persistSession(context.cookies, data.session);
         }
 
         return {
@@ -56,7 +78,7 @@ export const server = {
           cookies: context.cookies,
         });
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: input.email,
           password: input.password,
         });
@@ -66,6 +88,10 @@ export const server = {
             success: false,
             message: error.message,
           };
+        }
+
+        if (data.session) {
+          persistSession(context.cookies, data.session);
         }
 
         return {
@@ -89,6 +115,7 @@ export const server = {
         });
 
         await supabase.auth.signOut();
+        clearSession(context.cookies);
 
         return {
           success: true,

@@ -12,12 +12,13 @@
 *_keys
 *_secrets
 *_tokens
-.env
 .env.*
 .env.*.local
 .env.local
 id_dsa
 id_rsa
+!.env.example
+!.env
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 # BUILD ARTIFACTS & DISTRIBUTION
