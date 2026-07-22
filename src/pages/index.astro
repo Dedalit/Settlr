@@ -54,18 +54,18 @@ const items = Array.from({ length: 14 }, (_, i) => ({
             
             {type === 0 && (
               <div class="flex flex-col items-center gap-1.5 w-20">
-                <Icon class={`size-7 ${icon}`} />
+                <Icon className={`size-7 ${icon}`} />
                 <div class="w-full h-1.5 bg-gray-200 rounded"></div>
                 <div class={`w-3/4 h-1.5 ${bar} rounded`}></div>
                 <div class="w-full h-1 bg-gray-200 rounded mt-1"></div>
-                <Barcode class="size-6 text-gray-400 mt-1" />
+                <Barcode className="size-6 text-gray-400 mt-1" />
               </div>
             )}
 
             {type === 1 && (
               <div class="flex flex-col items-center gap-1.5 w-20">
                 <div class="flex items-center justify-between w-full">
-                  <Icon class={`size-6 ${icon}`} />
+                  <Icon className={`size-6 ${icon}`} />
                   <span class={`text-[9px] font-bold px-1.5 py-0.5 rounded ${badge}`}>$24.50</span>
                 </div>
                 <div class="grid grid-cols-2 gap-1 w-full my-0.5">
@@ -74,14 +74,14 @@ const items = Array.from({ length: 14 }, (_, i) => ({
                   <div class="h-1 bg-gray-300 rounded"></div>
                   <div class={`h-1 ${bar} rounded`}></div>
                 </div>
-                <QrCode class="size-6 text-gray-700" />
+                <QrCode className="size-6 text-gray-700" />
               </div>
             )}
 
             {type === 2 && (
               <div class="flex flex-col items-start gap-1.5 w-22">
                 <div class="flex items-center gap-2 w-full">
-                  <CreditCard class={`size-6 ${icon}`} />
+                  <CreditCard className={`size-6 ${icon}`} />
                   <div class={`w-8 h-1.5 ${bar} rounded`}></div>
                 </div>
                 <div class="w-full h-1 bg-gray-200 rounded"></div>
@@ -95,7 +95,7 @@ const items = Array.from({ length: 14 }, (_, i) => ({
 
             {type === 3 && (
               <div class="flex flex-col items-center gap-1 w-18">
-                <Icon class={`size-7 ${icon}`} />
+                <Icon className={`size-7 ${icon}`} />
                 <span class={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${badge} my-0.5`}>PAID</span>
                 <div class="w-full h-1 bg-gray-200 rounded"></div>
                 <div class="w-4/5 h-1 bg-gray-200 rounded"></div>
@@ -123,7 +123,7 @@ const items = Array.from({ length: 14 }, (_, i) => ({
       <div class="mt-10">
         <a href="/dashboard" class={buttonVariants({ size: "lg", className: "group bg-[#110B3B] hover:bg-[#110B3B]/90 text-white font-semibold px-9 py-7 text-lg rounded-full border border-white/20 backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-3" })}>
           Let's do it
-          <ArrowRight class="size-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+          <ArrowRight className="size-5 transition-transform duration-300 group-hover:translate-x-1.5" />
         </a>
       </div>
     </div>
