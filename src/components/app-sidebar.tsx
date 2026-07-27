@@ -3,17 +3,19 @@
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, LayoutDashboardIcon, ActivityIcon, ReceiptIcon, UsersIcon, FolderOpenIcon, FrameIcon, PieChartIcon, MapIcon } from "lucide-react"
+import { LayoutDashboardIcon, ActivityIcon, ReceiptIcon, UsersIcon, FolderOpenIcon } from "lucide-react"
 
 // This is sample data.
 const data = {
@@ -22,129 +24,77 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: (
-        <GalleryVerticalEndIcon
-        />
-      ),
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: (
-        <AudioLinesIcon
-        />
-      ),
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: (
-        <TerminalIcon
-        />
-      ),
-      plan: "Free",
-    },
-  ],
   navLinks: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: <LayoutDashboardIcon />,
       isActive: true,
     },
     {
       title: "Recent Activity",
-      url: "#",
+      url: "/dashboard/activity",
       icon: <ActivityIcon />,
     },
     {
       title: "Settls",
-      url: "#",
+      url: "/dashboard/settls",
       icon: <ReceiptIcon />,
     },
   ],
   navGroups: [
     {
       title: "Friends",
-      url: "#",
+      url: "/dashboard/friends",
       icon: <UsersIcon />,
       isActive: true,
       items: [
         {
           title: "Nasty",
-          url: "#",
+          url: "/dashboard/friends/nasty",
         },
         {
           title: "Pippo",
-          url: "#",
+          url: "/dashboard/friends/pippo",
         },
         {
           title: "GiovAnge",
-          url: "#",
+          url: "/dashboard/friends/giovanage",
         },
         {
           title: "Grecia <3",
-          url: "#",
+          url: "/dashboard/friends/grecia",
         },
         {
           title: "All friends...",
-          url: "#",
+          url: "/dashboard/friends",
           isDisabled: true,
         },
       ],
     },
     {
       title: "Groups",
-      url: "#",
+      url: "/dashboard/groups",
       icon: <FolderOpenIcon />,
       items: [
         {
           title: "Vacanza a Cecina",
-          url: "#",
+          url: "/dashboard/groups/cecina",
         },
         {
           title: "I Tre Topolini",
-          url: "#",
+          url: "/dashboard/groups/topolini",
         },
         {
           title: "The Weeknd 27/7",
-          url: "#",
+          url: "/dashboard/groups/weeknd",
         },
         {
           title: "All groups...",
-          url: "#",
+          url: "/dashboard/groups",
           isDisabled: true,
         },
       ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: (
-        <FrameIcon
-        />
-      ),
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: (
-        <PieChartIcon
-        />
-      ),
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: (
-        <MapIcon
-        />
-      ),
     },
   ],
 }
@@ -153,11 +103,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <div className="flex items-center gap-3 px-3 py-3">
+              <SidebarTrigger className="-ml-1 size-7 shrink-0" />
+              <h2 className="text-base font-black tracking-widest text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase whitespace-nowrap group-data-[collapsible=icon]:hidden">
+                SETTLR
+              </h2>
+            </div>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain links={data.navLinks} groups={data.navGroups} />
-        {/*--<NavProjects projects={data.projects} />*/}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

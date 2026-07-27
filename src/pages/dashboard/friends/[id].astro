@@ -1,0 +1,10 @@
+---
+import { FriendDetail } from "@/components/pages/friend-page"
+import Layout from '@/layouts/Layout.astro'
+
+const { id } = Astro.params
+---
+
+<Layout>
+  <FriendDetail client:load id={id} />
+</Layout>
