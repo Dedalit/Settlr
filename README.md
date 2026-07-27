@@ -28,6 +28,10 @@
   <br>
 </h1>
 
+<img alt="Settlr Homepage" src="https://i.postimg.cc/HkrwZpk5/settlr.png" />
+
+<br>
+
 <p align="center">
   <b>Split bills, track shared expenses, and settle up with friends — in seconds.</b>
 </p>
