@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Avatar,
   AvatarFallback,
@@ -18,7 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { ChevronsUpDownIcon, Settings, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 
 export function NavUser({
   user,
@@ -30,22 +32,6 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/api/auth/signout", {
-        method: "POST",
-      })
-
-      if (response.ok) {
-
-        window.location.href = "/auth/signin"
-      }
-    } catch (error) {
-      console.error("Errore durante il logout:", error)
-    }
-  }
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -88,19 +74,12 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <SparklesIcon />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
                 <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
+                <Settings />
+                Settings
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <BellIcon />
@@ -108,12 +87,10 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            
-            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+            <DropdownMenuItem onClick={() => window.location.href = "/api/auth/signout"}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
-            
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
