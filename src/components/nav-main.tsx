@@ -76,7 +76,7 @@ export function NavMain({
                   <SidebarMenuSubItem key={subItem.title}>
                     <SidebarMenuSubButton
                       render={subItem.isDisabled ? undefined : <a href={subItem.url} />}
-                      className={subItem.isDisabled ? "text-muted-foreground/50 pointer-events-none" : ""}
+                      className={subItem.isDisabled ? "text-muted-foreground/50 pointer-events-none" : subItem.isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
                     >
                       <span>{subItem.title}</span>
                     </SidebarMenuSubButton>
