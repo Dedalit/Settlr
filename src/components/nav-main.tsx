@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,9 +18,16 @@ import {
 import { ChevronRightIcon } from "lucide-react"
 
 export function NavMain({
-  items,
+  links,
+  groups,
 }: {
-  items: {
+  links: {
+    title: string
+    url: string
+    icon?: React.ReactNode
+    isActive?: boolean
+  }[]
+  groups: {
     title: string
     url: string
     icon?: React.ReactNode
@@ -26,32 +35,49 @@ export function NavMain({
     items?: {
       title: string
       url: string
+      isDisabled?: boolean
     }[]
   }[]
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {links.map((link) => (
+          <SidebarMenuItem key={link.title}>
+            <SidebarMenuButton
+              render={<a href={link.url} />}
+              tooltip={link.title}
+              isActive={link.isActive}
+            >
+              {link.icon}
+              <span>{link.title}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+      <SidebarMenu>
+        {groups.map((group) => (
           <Collapsible
-            key={item.title}
-            defaultOpen={item.isActive}
+            key={group.title}
+            defaultOpen={group.isActive}
             className="group/collapsible"
             render={<SidebarMenuItem />}
           >
             <CollapsibleTrigger
-              render={<SidebarMenuButton tooltip={item.title} />}
+              render={<SidebarMenuButton tooltip={group.title} />}
             >
-              {item.icon}
-              <span>{item.title}</span>
+              {group.icon}
+              <span>{group.title}</span>
               <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarMenuSub>
-                {item.items?.map((subItem) => (
+                {group.items?.map((subItem) => (
                   <SidebarMenuSubItem key={subItem.title}>
-                    <SidebarMenuSubButton render={<a href={subItem.url} />}>
+                    <SidebarMenuSubButton
+                      render={subItem.isDisabled ? undefined : <a href={subItem.url} />}
+                      className={subItem.isDisabled ? "text-muted-foreground/50 pointer-events-none" : ""}
+                    >
                       <span>{subItem.title}</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
