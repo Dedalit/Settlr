@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -16,7 +18,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-export function SignInForm({
+export default function SignInForm({
   className,
   onSuccess,
   ...props
@@ -43,7 +45,7 @@ export function SignInForm({
       const result = await response.json()
 
       if (!response.ok || !result.success) {
-        setErrorMsg(result.message || "Email o password non valide.")
+        setErrorMsg(result.message || "Invalid email or password.")
       } else {
         if (onSuccess) {
           onSuccess()
@@ -53,7 +55,7 @@ export function SignInForm({
       }
     } catch (err) {
       console.error(err)
-      setErrorMsg("Si è verificato un errore di rete. Riprova.")
+      setErrorMsg("A network error occurred. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -111,10 +113,6 @@ export function SignInForm({
               <div className="space-y-3 pt-2">
                 <Button type="submit" disabled={loading} className="w-full bg-white text-[#110B3B] hover:bg-purple-100 font-semibold shadow-lg h-9 text-sm">
                   {loading ? "Logging in..." : "Login"}
-                </Button>
-
-                <Button variant="outline" type="button" className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white h-9 text-sm">
-                  Login with Google
                 </Button>
               </div>
 
