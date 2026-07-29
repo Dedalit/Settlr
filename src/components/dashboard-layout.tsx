@@ -9,12 +9,27 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+  user?: {
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}
+
+export function DashboardLayout({ children, user }: DashboardLayoutProps) {
   const [pathname, setPathname] = React.useState("")
 
   React.useEffect(() => {
     setPathname(window.location.pathname)
   }, [])
+
+  const userProfile = user || {
+    name: "User",
+    email: "",
+    avatar: "/avatars/shadcn.jpg"
+  }
 
   return (
     <SidebarProvider>
@@ -25,7 +40,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
       </SidebarInset>
       <div className="fixed top-5 right-5 z-50">
-        <NavUser user={{ name: "shadcn", email: "m@example.com", avatar: "/avatars/shadcn.jpg" }} />
+        <NavUser user={userProfile} />
       </div>
       <div className="fixed bottom-5 left-5 z-50">
         <SidebarTrigger className="size-9 rounded-full bg-[#110B3B]/80 backdrop-blur-xl border border-white/20 shadow-2xl hover:bg-white/10 transition-colors" />
