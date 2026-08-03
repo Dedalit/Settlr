@@ -2,10 +2,11 @@
 
 import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
-import { FloatingActions } from "@/components/floating-actions"
+import { InlineActions } from "@/components/inline-actions"
+import { CardActionsMenu } from "@/components/card-actions-menu"
 import { CreateGroupModal } from "@/components/modals/create-group-modal"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, ArrowUpRight, ArrowDownRight, Receipt, Plus } from "lucide-react"
+import { Users, ArrowUpRight, ArrowDownRight, Receipt, Plus, LogOut } from "lucide-react"
 
 const groups = [
   {
@@ -52,18 +53,49 @@ const groups = [
 
 export function Groups() {
   const [createOpen, setCreateOpen] = React.useState(false)
+  const [groupsList, setGroupsList] = React.useState(groups)
+
+  const handleLeave = (group: (typeof groups)[number]) => {
+    if (group.balance !== 0) {
+      window.alert(
+        `You still have an outstanding balance of €${Math.abs(group.balance).toFixed(2)} in ${group.name}. Settle up before you can leave.`
+      )
+      return
+    }
+    setGroupsList((prev) => prev.filter((g) => g.id !== group.id))
+  }
 
   return (
     <>
-      <PageHeader title="Groups" subtitle="Shared expense groups you're part of" />
+      <PageHeader
+        title="Groups"
+        subtitle="Shared expense groups you're part of"
+        actions={
+          <InlineActions
+            actions={[
+              {
+                label: "Create group",
+                icon: <Plus className="size-4" />,
+                onClick: () => setCreateOpen(true),
+              },
+            ]}
+          />
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
-        {groups.map((group) => (
+        {groupsList.map((group) => (
           <a key={group.id} href={`/dashboard/groups/${group.id}`} className="block group">
-            <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] hover:border-purple-400/30 transition-all overflow-hidden">
+            <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] hover:border-purple-400/30 transition-all overflow-hidden">
               <div className="h-32 overflow-hidden">
                 <img src={group.image} alt={group.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               </div>
+              <CardActionsMenu
+                buttonClassName="absolute right-3 top-3"
+                label="Leave group"
+                icon={<LogOut className="size-4" />}
+                onAction={() => handleLeave(group)}
+              />
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
@@ -102,15 +134,6 @@ export function Groups() {
           </a>
         ))}
       </div>
-      <FloatingActions
-        actions={[
-          {
-            label: "Create group",
-            icon: <Plus className="size-4" />,
-            onClick: () => setCreateOpen(true),
-          },
-        ]}
-      />
       <CreateGroupModal open={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   )

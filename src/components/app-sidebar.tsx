@@ -3,10 +3,12 @@
 import * as React from "react"
 
 import { NavMain, type NavLink } from "@/components/nav-main"
+import { NavUser } from "@/components/nav-user"
 import { PinMoreModal, type PinMoreItem } from "@/components/modals/pin-more-modal"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -50,7 +52,7 @@ function getActiveState(pathname: string, navLinks: NavLink[]) {
   })
 }
 
-export function AppSidebar({ pathname, ...props }: React.ComponentProps<typeof Sidebar> & { pathname: string }) {
+export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<typeof Sidebar> & { pathname: string; user?: { name: string; email: string; avatar: string } }) {
   const [pinnedFriends, setPinnedFriends] = React.useState<string[]>(allFriends.slice(0, 4).map((f) => f.id))
   const [pinnedGroups, setPinnedGroups] = React.useState<string[]>(allGroups.slice(0, 3).map((g) => g.id))
   const [pinModal, setPinModal] = React.useState<null | "friends" | "groups">(null)
@@ -108,7 +110,7 @@ export function AppSidebar({ pathname, ...props }: React.ComponentProps<typeof S
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-2 px-3 py-3">
+            <div className="flex h-12 items-center gap-2 px-3">
               <h2 className="text-base font-black tracking-widest text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase whitespace-nowrap group-data-[collapsible=icon]:hidden">
                 SETTLR
               </h2>
@@ -119,6 +121,9 @@ export function AppSidebar({ pathname, ...props }: React.ComponentProps<typeof S
       <SidebarContent>
         <NavMain links={links} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
 
       <PinMoreModal

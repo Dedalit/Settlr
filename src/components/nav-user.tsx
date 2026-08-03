@@ -21,13 +21,17 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { ChevronsUpDownIcon, Settings, BadgeCheckIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { ChevronsUpDownIcon, Settings, BadgeCheckIcon, LogOutIcon } from "lucide-react"
 import { createBrowserSupabaseClient } from "@/lib/supabase"
+import { AccountModal } from "@/components/modals/account-modal"
+import { SettingsModal } from "@/components/modals/settings-modal"
 
 export function NavUser({ user: initialUser }: { user?: { name: string; email: string; avatar: string } } = {}) {
   const { isMobile } = useSidebar()
   const [userData, setUserData] = useState<{ name: string; email: string; avatar: string } | null>(initialUser || null)
   const [loading, setLoading] = useState(!initialUser)
+  const [accountOpen, setAccountOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
     if (initialUser) return // already have server user
@@ -76,7 +80,8 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
   const user = userData ?? { name: 'User', email: '', avatar: '/avatars/shadcn.jpg' }
 
   return (
-    <SidebarMenu>
+    <>
+      <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -116,17 +121,13 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setAccountOpen(true)}>
                 <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                 <Settings />
                 Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -138,5 +139,13 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+    <AccountModal
+      open={accountOpen}
+      onClose={() => setAccountOpen(false)}
+      user={user}
+      onSave={(updated) => setUserData({ ...user, ...updated })}
+    />
+    <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </>
   )
 }

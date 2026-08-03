@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FloatingActions } from "@/components/floating-actions"
+import { InlineActions } from "@/components/inline-actions"
 import { AddExpenseModal } from "@/components/modals/add-expense-modal"
 import { SettlUpModal } from "@/components/modals/settl-up-modal"
-import { ArrowUpRight, ArrowDownRight, Users, Clock, CheckCircle2, AlertCircle, Mail, Receipt, HandCoins } from "lucide-react"
+import { ArrowUpRight, ArrowDownRight, Clock, CheckCircle2, AlertCircle, Mail, Receipt, HandCoins } from "lucide-react"
 
 const statusIcon = {
   settled: <CheckCircle2 className="size-4 text-emerald-400" />,
@@ -13,11 +13,11 @@ const statusIcon = {
   overdue: <AlertCircle className="size-4 text-red-400" />,
 }
 
-const friendProfiles: Record<string, { name: string; avatar: string; email: string; joined: string; balance: number; settls: number }> = {
-  nasty: { name: "Nasty", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Nasty&backgroundColor=b6e3f4", email: "nasty@example.com", joined: "Jan 2025", balance: -24.5, settls: 8 },
-  pippo: { name: "Pippo", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Pippo&backgroundColor=c0aede", email: "pippo@example.com", joined: "Feb 2025", balance: 27.3, settls: 12 },
-  giovanage: { name: "GiovAnge", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=GiovAnge&backgroundColor=d1d4f9", email: "giovanage@example.com", joined: "Mar 2025", balance: 37.0, settls: 5 },
-  grecia: { name: "Grecia <3", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Grecia&backgroundColor=ffd5dc", email: "grecia@example.com", joined: "Dec 2024", balance: -42.0, settls: 15 },
+const friendProfiles: Record<string, { name: string; avatar: string; email: string; balance: number }> = {
+  nasty: { name: "Nasty", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Nasty&backgroundColor=b6e3f4", email: "nasty@example.com", balance: -24.5 },
+  pippo: { name: "Pippo", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Pippo&backgroundColor=c0aede", email: "pippo@example.com", balance: 27.3 },
+  giovanage: { name: "GiovAnge", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=GiovAnge&backgroundColor=d1d4f9", email: "giovanage@example.com", balance: 37.0 },
+  grecia: { name: "Grecia <3", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Grecia&backgroundColor=ffd5dc", email: "grecia@example.com", balance: -42.0 },
 }
 
 const settlHistory = [
@@ -28,7 +28,7 @@ const settlHistory = [
 ]
 
 export function FriendDetail({ id }: { id: string }) {
-  const friend = friendProfiles[id] || { name: "Unknown", avatar: "", email: "", joined: "", balance: 0, settls: 0 }
+  const friend = friendProfiles[id] || { name: "Unknown", avatar: "", email: "", balance: 0 }
   const [expenseOpen, setExpenseOpen] = React.useState(false)
   const [settlOpen, setSettlOpen] = React.useState(false)
 
@@ -38,6 +38,20 @@ export function FriendDetail({ id }: { id: string }) {
   ]
   const settlTargets = [{ name: friend.name, avatar: friend.avatar, amount: Math.abs(friend.balance) }]
 
+  const actions = [
+    {
+      label: "Add Expense",
+      icon: <Receipt className="size-4" />,
+      onClick: () => setExpenseOpen(true),
+    },
+    {
+      label: "Settl Up",
+      icon: <HandCoins className="size-4" />,
+      variant: "primary" as const,
+      onClick: () => setSettlOpen(true),
+    },
+  ]
+
   return (
     <>
       {/* About Section */}
@@ -45,32 +59,27 @@ export function FriendDetail({ id }: { id: string }) {
         <div className="absolute -inset-1 rounded-2xl bg-linear-to-r from-purple-400 via-indigo-300 to-pink-400 opacity-20 blur-2xl"></div>
         <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
           <CardContent className="p-6">
-            <div className="flex items-center gap-5">
+            <div className="flex flex-wrap items-center gap-5">
               <img src={friend.avatar} alt={friend.name} className="size-20 rounded-full bg-white/10 ring-2 ring-purple-400/30" />
-              <div className="flex-1">
-                <h1 className="text-2xl font-black text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">{friend.name}</h1>
-                <div className="flex items-center gap-4 mt-2">
+              <div className="min-w-0 flex-1">
+                <h1 className="truncate text-2xl font-black text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">{friend.name}</h1>
+                <div className="flex flex-wrap items-center gap-4 mt-2">
                   <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
                     <Mail className="size-3.5" />
                     {friend.email}
                   </span>
-                  <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
-                    <Users className="size-3.5" />
-                    Joined {friend.joined}
-                  </span>
                 </div>
               </div>
-              <div className="text-right">
-                {friend.balance !== 0 && (
-                  <div className={`text-2xl font-bold ${friend.balance > 0 ? "text-emerald-400" : "text-red-400"}`}>
-                    {friend.balance > 0 ? "+" : ""}€{Math.abs(friend.balance).toFixed(2)}
-                  </div>
-                )}
-                <p className="text-xs text-purple-200/40 mt-1">{friend.settls} transactions</p>
+              <div className="ml-auto hidden sm:ml-0 lg:block">
+                <InlineActions actions={actions} />
               </div>
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="lg:hidden">
+        <InlineActions actions={actions} layout="card" />
       </div>
 
       {/* Balance Cards */}
@@ -126,21 +135,6 @@ export function FriendDetail({ id }: { id: string }) {
           </div>
         </CardContent>
       </Card>
-      <FloatingActions
-        actions={[
-          {
-            label: "Add Expense",
-            icon: <Receipt className="size-4" />,
-            onClick: () => setExpenseOpen(true),
-          },
-          {
-            label: "Settl Up",
-            icon: <HandCoins className="size-4" />,
-            variant: "primary",
-            onClick: () => setSettlOpen(true),
-          },
-        ]}
-      />
       <AddExpenseModal open={expenseOpen} onClose={() => setExpenseOpen(false)} members={expenseMembers} />
       <SettlUpModal open={settlOpen} onClose={() => setSettlOpen(false)} targets={settlTargets} />
     </>
