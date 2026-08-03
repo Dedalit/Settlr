@@ -1,8 +1,16 @@
 ---
-import { Settls } from "@/components/pages/settls"
-import Layout from '@/layouts/Layout.astro'
+import Layout from '@/layouts/Layout.astro';
+import { getServerUser } from '@/lib/user';
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { Settls } from "@/components/pages/settls";
+
+const userData = await getServerUser({ request: Astro.request, cookies: Astro.cookies });
+if (!userData) return Astro.redirect('/auth/signin');
+
 ---
 
 <Layout>
-  <Settls client:load />
+  <DashboardLayout client:load user={userData}>
+    <Settls client:load />
+  </DashboardLayout>
 </Layout>
