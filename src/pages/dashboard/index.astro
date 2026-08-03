@@ -2,7 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import { getServerUser } from '@/lib/user';
 import { DashboardLayout } from "@/components/dashboard-layout";
-import { DashboardOverview } from "@/components/pages/dashboard-overview.tsx";
+import { Dashboard } from "@/components/pages/dashboard";
 
 const userData = await getServerUser({ request: Astro.request, cookies: Astro.cookies });
 if (!userData) return Astro.redirect('/auth/signin');
@@ -11,6 +11,6 @@ if (!userData) return Astro.redirect('/auth/signin');
 
 <Layout>
   <DashboardLayout client:load user={userData}>
-    <DashboardOverview client:load />
+    <Dashboard client:load />
   </DashboardLayout>
 </Layout>
