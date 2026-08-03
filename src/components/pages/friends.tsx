@@ -2,10 +2,11 @@
 
 import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
-import { FloatingActions } from "@/components/floating-actions"
+import { InlineActions } from "@/components/inline-actions"
+import { CardActionsMenu } from "@/components/card-actions-menu"
 import { AddFriendModal } from "@/components/modals/add-friend-modal"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, ArrowUpRight, ArrowDownRight, UserPlus } from "lucide-react"
+import { Users, ArrowUpRight, ArrowDownRight, UserPlus, Trash2 } from "lucide-react"
 
 const friends = [
   {
@@ -60,16 +61,47 @@ const friends = [
 
 export function Friends() {
   const [addFriendOpen, setAddFriendOpen] = React.useState(false)
+  const [friendsList, setFriendsList] = React.useState(friends)
+
+  const handleDelete = (friend: (typeof friends)[number]) => {
+    if (friend.balance !== 0) {
+      window.alert(
+        `You still have an outstanding balance with ${friend.name} (€${Math.abs(friend.balance).toFixed(2)}). Settle up before you can remove them.`
+      )
+      return
+    }
+    setFriendsList((prev) => prev.filter((f) => f.id !== friend.id))
+  }
 
   return (
     <>
-      <PageHeader title="Friends" subtitle="People you share expenses with" />
+      <PageHeader
+        title="Friends"
+        subtitle="People you share expenses with"
+        actions={
+          <InlineActions
+            actions={[
+              {
+                label: "Add friend",
+                icon: <UserPlus className="size-4" />,
+                onClick: () => setAddFriendOpen(true),
+              },
+            ]}
+          />
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {friends.map((friend) => (
+        {friendsList.map((friend) => (
           <a key={friend.id} href={`/dashboard/friends/${friend.id}`} className="block group">
-            <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] hover:border-purple-400/30 transition-all">
+            <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] hover:border-purple-400/30 transition-all">
               <CardContent className="p-5">
+                <CardActionsMenu
+                  buttonClassName="absolute right-3 top-3"
+                  label="Delete friend"
+                  icon={<Trash2 className="size-4" />}
+                  onAction={() => handleDelete(friend)}
+                />
                 <div className="flex items-center gap-4">
                   <img src={friend.avatar} alt={friend.name} className="size-14 rounded-full bg-white/10" />
                   <div className="flex-1 min-w-0">
@@ -105,15 +137,6 @@ export function Friends() {
           </a>
         ))}
       </div>
-      <FloatingActions
-        actions={[
-          {
-            label: "Add friend",
-            icon: <UserPlus className="size-4" />,
-            onClick: () => setAddFriendOpen(true),
-          },
-        ]}
-      />
       <AddFriendModal open={addFriendOpen} onClose={() => setAddFriendOpen(false)} />
     </>
   )

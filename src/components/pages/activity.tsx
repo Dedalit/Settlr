@@ -122,7 +122,7 @@ export function Activity() {
     <>
       <PageHeader title="Recent Activity" subtitle="Everything happening in your groups" />
 
-      <div className="flex items-center gap-4 mt-2">
+      <div className="mt-2 flex flex-wrap items-center gap-2 md:gap-4">
         <FilterChip label="All" active />
         <FilterChip label="Settlements" />
         <FilterChip label="Expenses" />
@@ -165,7 +165,7 @@ export function Activity() {
 function FilterChip({ label, active }: { label: string; active?: boolean }) {
   return (
     <button
-      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+      className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
         active
           ? "bg-purple-500/30 text-purple-200 border border-purple-400/40"
           : "bg-white/5 text-purple-200/50 border border-white/10 hover:bg-white/10 hover:text-purple-200/70"
