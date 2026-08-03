@@ -1,13 +1,7 @@
 "use client"
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -15,30 +9,24 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { ChevronRightIcon } from "lucide-react"
 
-export function NavMain({
-  links,
-  groups,
-}: {
-  links: {
-    title: string
-    url: string
-    icon?: React.ReactNode
-    isActive?: boolean
-  }[]
-  groups: {
-    title: string
-    url: string
-    icon?: React.ReactNode
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-      isDisabled?: boolean
-    }[]
-  }[]
-}) {
+export interface NavSubItem {
+  title: string
+  url?: string
+  onClick?: () => void
+  isActive?: boolean
+  className?: string
+}
+
+export interface NavLink {
+  title: string
+  url: string
+  icon?: React.ReactNode
+  isActive?: boolean
+  items?: NavSubItem[]
+}
+
+export function NavMain({ links }: { links: NavLink[] }) {
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -48,43 +36,33 @@ export function NavMain({
               render={<a href={link.url} />}
               tooltip={link.title}
               isActive={link.isActive}
+              className="border border-sidebar-border"
             >
               {link.icon}
               <span>{link.title}</span>
             </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
-      <SidebarMenu>
-        {groups.map((group) => (
-          <Collapsible
-            key={group.title}
-            defaultOpen={group.isActive}
-            className="group/collapsible"
-            render={<SidebarMenuItem />}
-          >
-            <CollapsibleTrigger
-              render={<SidebarMenuButton tooltip={group.title} />}
-            >
-              {group.icon}
-              <span>{group.title}</span>
-              <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
-            </CollapsibleTrigger>
-            <CollapsibleContent>
+            {link.items && (
               <SidebarMenuSub>
-                {group.items?.map((subItem) => (
+                {link.items.map((subItem) => (
                   <SidebarMenuSubItem key={subItem.title}>
                     <SidebarMenuSubButton
-                      render={subItem.isDisabled ? undefined : <a href={subItem.url} />}
-                      className={subItem.isDisabled ? "text-muted-foreground/50 pointer-events-none" : subItem.isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
+                      render={
+                        subItem.onClick ? (
+                          <button type="button" onClick={subItem.onClick} />
+                        ) : subItem.url ? (
+                          <a href={subItem.url} />
+                        ) : undefined
+                      }
+                      isActive={subItem.isActive}
+                      className={subItem.className}
                     >
                       <span>{subItem.title}</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 ))}
               </SidebarMenuSub>
-            </CollapsibleContent>
-          </Collapsible>
+            )}
+          </SidebarMenuItem>
         ))}
       </SidebarMenu>
     </SidebarGroup>

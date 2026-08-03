@@ -1,0 +1,72 @@
+"use client"
+
+import * as React from "react"
+import { Modal } from "@/components/ui/modal"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Segmented } from "@/components/modals/segmented"
+import { ImageIcon, Plus } from "lucide-react"
+
+type GroupType = "trip" | "roommates" | "event" | "other"
+
+const groupTypeOptions: { label: string; value: GroupType }[] = [
+  { label: "Trip", value: "trip" },
+  { label: "Roommates", value: "roommates" },
+  { label: "Event", value: "event" },
+  { label: "Other", value: "other" },
+]
+
+export function CreateGroupModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [title, setTitle] = React.useState("")
+  const [picture, setPicture] = React.useState("")
+  const [type, setType] = React.useState<GroupType>("trip")
+
+  return (
+    <Modal open={open} onClose={onClose} title="Create group">
+      <div className="space-y-5">
+        <Field>
+          <FieldLabel className="text-purple-200/70">Group title</FieldLabel>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Vacanza a Cecina"
+            className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel className="text-purple-200/70">Group picture</FieldLabel>
+          <div className="flex items-center gap-3">
+            {picture ? (
+              <img
+                src={picture}
+                alt="Group preview"
+                className="size-14 shrink-0 rounded-2xl border border-white/10 object-cover"
+              />
+            ) : (
+              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-purple-200/40">
+                <ImageIcon className="size-5" />
+              </div>
+            )}
+            <Input
+              value={picture}
+              onChange={(e) => setPicture(e.target.value)}
+              placeholder="Paste an image URL..."
+              className="h-11 flex-1 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+            />
+          </div>
+        </Field>
+
+        <Field>
+          <FieldLabel className="text-purple-200/70">Type</FieldLabel>
+          <Segmented<GroupType> options={groupTypeOptions} value={type} onChange={setType} />
+        </Field>
+
+        <Button className="h-12 w-full rounded-full bg-purple-500/80 text-base font-semibold text-white hover:bg-purple-400">
+          <Plus className="size-4" /> Create group
+        </Button>
+      </div>
+    </Modal>
+  )
+}
