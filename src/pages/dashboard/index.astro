@@ -1,38 +1,12 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { createClient } from '@/lib/supabase';
+import { getServerUser } from '@/lib/user';
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { DashboardOverview } from "@/components/pages/dashboard-overview.tsx";
 
-const supabase = createClient({ request: Astro.request, cookies: Astro.cookies });
-const { data: { user } } = await supabase.auth.getUser();
+const userData = await getServerUser({ request: Astro.request, cookies: Astro.cookies });
+if (!userData) return Astro.redirect('/auth/signin');
 
-if (!user) {
-  return Astro.redirect('/auth/signin');
-}
-
-// Recupera i dati dai metadata di Supabase
-const username = user.user_metadata?.username;
-const firstName = user.user_metadata?.first_name || '';
-const lastName = user.user_metadata?.last_name || '';
-const fullName = `${firstName} ${lastName}`.trim();
-
-const email = user.email || '';
-const usernameFromEmail = email.split('@')[0];
-
-// Priorità: Username -> Nome e Cognome -> Nome completo da metadata -> Email -> 'User'
-const displayName = 
-  username || 
-  (fullName ? fullName : null) || 
-  user.user_metadata?.full_name || 
-  user.user_metadata?.name || 
-  (usernameFromEmail ? usernameFromEmail.charAt(0).toUpperCase() + usernameFromEmail.slice(1) : 'User');
-
-const userData = {
-  name: displayName,
-  email: email,
-  avatar: user.user_metadata?.avatar_url || '/avatars/shadcn.jpg'
-};
 ---
 
 <Layout>

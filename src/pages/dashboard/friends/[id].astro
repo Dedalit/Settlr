@@ -1,10 +1,21 @@
 ---
-import { FriendDetail } from "@/components/pages/friend-page"
-import Layout from '@/layouts/Layout.astro'
+import Layout from '@/layouts/Layout.astro';
+import { getServerUser } from '@/lib/user';
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { FriendDetail } from "@/components/pages/friend-page";
 
-const { id } = Astro.params
+const rawId = Astro.params.id;
+if (!rawId) {
+  return Astro.redirect('/dashboard');
+}
+const id: string = String(rawId);
+
+const userData = await getServerUser({ request: Astro.request, cookies: Astro.cookies });
+if (!userData) return Astro.redirect('/auth/signin');
 ---
 
 <Layout>
-  <FriendDetail client:load id={id} />
+  <DashboardLayout client:load user={userData}>
+    <FriendDetail client:load id={id} />
+  </DashboardLayout>
 </Layout>
