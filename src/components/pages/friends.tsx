@@ -1,8 +1,11 @@
 "use client"
 
+import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
+import { FloatingActions } from "@/components/floating-actions"
+import { AddFriendModal } from "@/components/modals/add-friend-modal"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { Users, ArrowUpRight, ArrowDownRight, UserPlus } from "lucide-react"
 
 const friends = [
   {
@@ -56,6 +59,8 @@ const friends = [
 ]
 
 export function Friends() {
+  const [addFriendOpen, setAddFriendOpen] = React.useState(false)
+
   return (
     <>
       <PageHeader title="Friends" subtitle="People you share expenses with" />
@@ -100,6 +105,16 @@ export function Friends() {
           </a>
         ))}
       </div>
+      <FloatingActions
+        actions={[
+          {
+            label: "Add friend",
+            icon: <UserPlus className="size-4" />,
+            onClick: () => setAddFriendOpen(true),
+          },
+        ]}
+      />
+      <AddFriendModal open={addFriendOpen} onClose={() => setAddFriendOpen(false)} />
     </>
   )
 }

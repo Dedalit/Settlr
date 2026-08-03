@@ -1,7 +1,11 @@
 "use client"
 
+import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, ArrowUpRight, ArrowDownRight, Receipt, Calendar, MapPin, CheckCircle2, Clock, AlertCircle } from "lucide-react"
+import { FloatingActions } from "@/components/floating-actions"
+import { AddExpenseModal } from "@/components/modals/add-expense-modal"
+import { SettlUpModal } from "@/components/modals/settl-up-modal"
+import { Users, ArrowUpRight, ArrowDownRight, Receipt, Calendar, MapPin, CheckCircle2, Clock, AlertCircle, HandCoins } from "lucide-react"
 
 const statusIcon = {
   settled: <CheckCircle2 className="size-4 text-emerald-400" />,
@@ -36,6 +40,13 @@ const settlHistory = [
 export function GroupDetail({ id }: { id: string }) {
   const group = groupProfiles[id] || { name: "Unknown", image: "", members: 0, balance: 0, totalSpent: 0, created: "", location: "" }
   const members = memberList[id] || []
+  const [expenseOpen, setExpenseOpen] = React.useState(false)
+  const [settlOpen, setSettlOpen] = React.useState(false)
+
+  const expenseMembers = [{ name: "You" }, ...members.filter((m) => m.name !== "You").map((m) => ({ name: m.name }))]
+  const settlTargets = members
+    .filter((m) => m.name !== "You" && m.balance !== 0)
+    .map((m) => ({ name: m.name, amount: Math.abs(m.balance) }))
 
   return (
     <>
@@ -164,6 +175,23 @@ export function GroupDetail({ id }: { id: string }) {
           </CardContent>
         </Card>
       </div>
+      <FloatingActions
+        actions={[
+          {
+            label: "Add expense",
+            icon: <Receipt className="size-4" />,
+            onClick: () => setExpenseOpen(true),
+          },
+          {
+            label: "Settl Up",
+            icon: <HandCoins className="size-4" />,
+            variant: "primary",
+            onClick: () => setSettlOpen(true),
+          },
+        ]}
+      />
+      <AddExpenseModal open={expenseOpen} onClose={() => setExpenseOpen(false)} members={expenseMembers} />
+      <SettlUpModal open={settlOpen} onClose={() => setSettlOpen(false)} targets={settlTargets} />
     </>
   )
 }

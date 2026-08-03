@@ -1,7 +1,11 @@
 "use client"
 
+import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowUpRight, ArrowDownRight, Users, Clock, CheckCircle2, AlertCircle, Mail } from "lucide-react"
+import { FloatingActions } from "@/components/floating-actions"
+import { AddExpenseModal } from "@/components/modals/add-expense-modal"
+import { SettlUpModal } from "@/components/modals/settl-up-modal"
+import { ArrowUpRight, ArrowDownRight, Users, Clock, CheckCircle2, AlertCircle, Mail, Receipt, HandCoins } from "lucide-react"
 
 const statusIcon = {
   settled: <CheckCircle2 className="size-4 text-emerald-400" />,
@@ -25,6 +29,14 @@ const settlHistory = [
 
 export function FriendDetail({ id }: { id: string }) {
   const friend = friendProfiles[id] || { name: "Unknown", avatar: "", email: "", joined: "", balance: 0, settls: 0 }
+  const [expenseOpen, setExpenseOpen] = React.useState(false)
+  const [settlOpen, setSettlOpen] = React.useState(false)
+
+  const expenseMembers = [
+    { name: "You" },
+    { name: friend.name, avatar: friend.avatar },
+  ]
+  const settlTargets = [{ name: friend.name, avatar: friend.avatar, amount: Math.abs(friend.balance) }]
 
   return (
     <>
@@ -114,6 +126,23 @@ export function FriendDetail({ id }: { id: string }) {
           </div>
         </CardContent>
       </Card>
+      <FloatingActions
+        actions={[
+          {
+            label: "Add Expense",
+            icon: <Receipt className="size-4" />,
+            onClick: () => setExpenseOpen(true),
+          },
+          {
+            label: "Settl Up",
+            icon: <HandCoins className="size-4" />,
+            variant: "primary",
+            onClick: () => setSettlOpen(true),
+          },
+        ]}
+      />
+      <AddExpenseModal open={expenseOpen} onClose={() => setExpenseOpen(false)} members={expenseMembers} />
+      <SettlUpModal open={settlOpen} onClose={() => setSettlOpen(false)} targets={settlTargets} />
     </>
   )
 }

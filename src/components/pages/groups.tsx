@@ -1,8 +1,11 @@
 "use client"
 
+import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
+import { FloatingActions } from "@/components/floating-actions"
+import { CreateGroupModal } from "@/components/modals/create-group-modal"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, ArrowUpRight, ArrowDownRight, Receipt } from "lucide-react"
+import { Users, ArrowUpRight, ArrowDownRight, Receipt, Plus } from "lucide-react"
 
 const groups = [
   {
@@ -48,6 +51,8 @@ const groups = [
 ]
 
 export function Groups() {
+  const [createOpen, setCreateOpen] = React.useState(false)
+
   return (
     <>
       <PageHeader title="Groups" subtitle="Shared expense groups you're part of" />
@@ -97,6 +102,16 @@ export function Groups() {
           </a>
         ))}
       </div>
+      <FloatingActions
+        actions={[
+          {
+            label: "Create group",
+            icon: <Plus className="size-4" />,
+            onClick: () => setCreateOpen(true),
+          },
+        ]}
+      />
+      <CreateGroupModal open={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   )
 }
