@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Dashboard } from "@/components/pages/dashboard";
+---
+
+<Layout>
+  <div class="min-h-screen p-6 bg-[#0F0A2E]">
+    <Dashboard client:load />
+  </div>
+</Layout>
