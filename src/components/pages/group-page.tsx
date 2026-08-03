@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FloatingActions } from "@/components/floating-actions"
+import { InlineActions } from "@/components/inline-actions"
 import { AddExpenseModal } from "@/components/modals/add-expense-modal"
 import { SettlUpModal } from "@/components/modals/settl-up-modal"
-import { Users, ArrowUpRight, ArrowDownRight, Receipt, Calendar, MapPin, CheckCircle2, Clock, AlertCircle, HandCoins } from "lucide-react"
+import { Users, ArrowUpRight, ArrowDownRight, Receipt, Calendar, CheckCircle2, Clock, AlertCircle, HandCoins } from "lucide-react"
 
 const statusIcon = {
   settled: <CheckCircle2 className="size-4 text-emerald-400" />,
@@ -13,11 +13,11 @@ const statusIcon = {
   overdue: <AlertCircle className="size-4 text-red-400" />,
 }
 
-const groupProfiles: Record<string, { name: string; image: string; members: number; balance: number; totalSpent: number; created: string; location: string }> = {
-  cecina: { name: "Vacanza a Cecina", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop", members: 4, balance: 47.5, totalSpent: 1240.0, created: "Jun 2026", location: "Cecina, Italy" },
-  topolini: { name: "I Tre Topolini", image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop", members: 4, balance: -15.0, totalSpent: 890.5, created: "May 2026", location: "Milan, Italy" },
-  weeknd: { name: "The Weeknd 27/7", image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=300&fit=crop", members: 3, balance: 0, totalSpent: 540.0, created: "Jul 2026", location: "Rome, Italy" },
-  universita: { name: "Università '25", image: "https://images.unsplash.com/photo-1523050854058-8df90110c476?w=400&h=300&fit=crop", members: 6, balance: 120.0, totalSpent: 2100.0, created: "Sep 2025", location: "Bologna, Italy" },
+const groupProfiles: Record<string, { name: string; image: string; members: number; balance: number; totalSpent: number; created: string }> = {
+  cecina: { name: "Vacanza a Cecina", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop", members: 4, balance: 47.5, totalSpent: 1240.0, created: "Jun 2026" },
+  topolini: { name: "I Tre Topolini", image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop", members: 4, balance: -15.0, totalSpent: 890.5, created: "May 2026" },
+  weeknd: { name: "The Weeknd 27/7", image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=300&fit=crop", members: 3, balance: 0, totalSpent: 540.0, created: "Jul 2026" },
+  universita: { name: "Università '25", image: "https://images.unsplash.com/photo-1523050854058-8df90110c476?w=400&h=300&fit=crop", members: 6, balance: 120.0, totalSpent: 2100.0, created: "Sep 2025" },
 }
 
 const memberList: Record<string, { name: string; avatar: string; balance: number }[]> = {
@@ -38,7 +38,7 @@ const settlHistory = [
 ]
 
 export function GroupDetail({ id }: { id: string }) {
-  const group = groupProfiles[id] || { name: "Unknown", image: "", members: 0, balance: 0, totalSpent: 0, created: "", location: "" }
+  const group = groupProfiles[id] || { name: "Unknown", image: "", members: 0, balance: 0, totalSpent: 0, created: "" }
   const members = memberList[id] || []
   const [expenseOpen, setExpenseOpen] = React.useState(false)
   const [settlOpen, setSettlOpen] = React.useState(false)
@@ -47,6 +47,20 @@ export function GroupDetail({ id }: { id: string }) {
   const settlTargets = members
     .filter((m) => m.name !== "You" && m.balance !== 0)
     .map((m) => ({ name: m.name, amount: Math.abs(m.balance) }))
+
+  const actions = [
+    {
+      label: "Add expense",
+      icon: <Receipt className="size-4" />,
+      onClick: () => setExpenseOpen(true),
+    },
+    {
+      label: "Settl Up",
+      icon: <HandCoins className="size-4" />,
+      variant: "primary" as const,
+      onClick: () => setSettlOpen(true),
+    },
+  ]
 
   return (
     <>
@@ -58,15 +72,16 @@ export function GroupDetail({ id }: { id: string }) {
             <img src={group.image} alt={group.name} className="w-full h-full object-cover" />
           </div>
           <CardContent className="p-6">
-            <h1 className="text-2xl font-black text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">{group.name}</h1>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <h1 className="text-2xl font-black text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">{group.name}</h1>
+              <div className="hidden lg:block">
+                <InlineActions actions={actions} />
+              </div>
+            </div>
             <div className="flex flex-wrap items-center gap-4 mt-3">
               <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
                 <Users className="size-3.5" />
                 {group.members} members
-              </span>
-              <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
-                <MapPin className="size-3.5" />
-                {group.location}
               </span>
               <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
                 <Calendar className="size-3.5" />
@@ -79,6 +94,10 @@ export function GroupDetail({ id }: { id: string }) {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="lg:hidden">
+        <InlineActions actions={actions} layout="card" />
       </div>
 
       {/* Balance Cards */}
@@ -175,21 +194,6 @@ export function GroupDetail({ id }: { id: string }) {
           </CardContent>
         </Card>
       </div>
-      <FloatingActions
-        actions={[
-          {
-            label: "Add expense",
-            icon: <Receipt className="size-4" />,
-            onClick: () => setExpenseOpen(true),
-          },
-          {
-            label: "Settl Up",
-            icon: <HandCoins className="size-4" />,
-            variant: "primary",
-            onClick: () => setSettlOpen(true),
-          },
-        ]}
-      />
       <AddExpenseModal open={expenseOpen} onClose={() => setExpenseOpen(false)} members={expenseMembers} />
       <SettlUpModal open={settlOpen} onClose={() => setSettlOpen(false)} targets={settlTargets} />
     </>
