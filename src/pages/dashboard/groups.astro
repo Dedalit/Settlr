@@ -1,8 +1,16 @@
 ---
-import { Groups } from "@/components/pages/groups"
-import Layout from '@/layouts/Layout.astro'
+import Layout from '@/layouts/Layout.astro';
+import { getServerUser } from '@/lib/user';
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { Groups } from "@/components/pages/groups";
+
+const userData = await getServerUser({ request: Astro.request, cookies: Astro.cookies });
+if (!userData) return Astro.redirect('/auth/signin');
+
 ---
 
 <Layout>
-  <Groups client:load />
+  <DashboardLayout client:load user={userData}>
+    <Groups client:load />
+  </DashboardLayout>
 </Layout>
