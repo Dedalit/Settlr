@@ -45,29 +45,29 @@ export function AccountModal({ open, onClose, user, onSave }: AccountModalProps)
 
         <div className="w-full space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-purple-200/60">Name</label>
+            <label className="mb-1.5 block text-xs font-semibold text-foreground">Name</label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
-              className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+              className="h-11 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-purple-200/60">Email</label>
+            <label className="mb-1.5 block text-xs font-semibold text-foreground">Email</label>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+              className="h-11 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
             />
           </div>
         </div>
 
         <Button
           onClick={handleSave}
-          className="w-full h-11 rounded-full bg-purple-500/80 text-sm font-semibold text-white hover:bg-purple-400"
+          className="w-full h-11 rounded-full bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           {saved ? <Check className="size-4" /> : <Save className="size-4" />}
           {saved ? "Saved" : "Save changes"}

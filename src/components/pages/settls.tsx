@@ -103,42 +103,42 @@ export function Settls() {
       <PageHeader title="Settls" subtitle="All your transactions and settlements" />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
                 <ArrowUpRight className="size-5 text-emerald-400" />
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">Owed to You</p>
+                <p className="text-xs text-muted-foreground">Owed to You</p>
                 <p className="text-xl font-bold text-emerald-400">€{totalOwedToYou.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-xl bg-red-500/20 flex items-center justify-center">
                 <ArrowDownRight className="size-5 text-red-400" />
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">You Owe</p>
+                <p className="text-xs text-muted-foreground">You Owe</p>
                 <p className="text-xl font-bold text-red-400">€{totalYouOwe.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`size-10 rounded-xl flex items-center justify-center ${netBalance >= 0 ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
                 <span className="text-lg font-bold">{netBalance >= 0 ? "+" : ""}€{netBalance.toFixed(2)}</span>
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">Net Balance</p>
+                <p className="text-xs text-muted-foreground">Net Balance</p>
                 <p className={`text-xl font-bold ${netBalance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                   {netBalance >= 0 ? "You're owed" : "You owe"}
                 </p>
@@ -148,28 +148,28 @@ export function Settls() {
         </Card>
       </div>
 
-      <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+      <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="text-purple-100 text-sm font-medium">All Transactions</CardTitle>
-          <CardDescription className="text-purple-200/60 text-xs">Recent activity with friends and groups</CardDescription>
+          <CardTitle className="text-foreground text-sm font-medium">All Transactions</CardTitle>
+          <CardDescription className="text-muted-foreground text-xs">Recent activity with friends and groups</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {transactions.map((t) => (
-              <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/[0.07] transition-colors">
+              <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-secondary border-border hover:bg-accent/50 transition-colors">
                 <div className="shrink-0">{statusIcon[t.status]}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-purple-100 font-medium truncate">
+                  <p className="text-sm text-foreground font-medium truncate">
                     {t.friend}
-                    <span className="text-purple-200/40 font-normal"> — {t.group}</span>
+                    <span className="text-muted-foreground font-normal"> — {t.group}</span>
                   </p>
-                  <p className="text-xs text-purple-200/50 truncate">{t.description}</p>
+                  <p className="text-xs text-muted-foreground truncate">{t.description}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className={`text-sm font-semibold ${t.type === "owed-to-you" ? "text-emerald-400" : t.type === "you-owe" ? "text-red-400" : "text-white"}`}>
+                  <p className={`text-sm font-semibold ${t.type === "owed-to-you" ? "text-emerald-400" : t.type === "you-owe" ? "text-red-400" : "text-foreground"}`}>
                     {t.type === "owed-to-you" ? "+" : t.type === "you-owe" ? "-" : ""}€{t.amount.toFixed(2)}
                   </p>
-                  <p className="text-xs text-purple-200/30">{t.date}</p>
+                  <p className="text-xs text-muted-foreground">{t.date}</p>
                 </div>
               </div>
             ))}

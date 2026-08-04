@@ -25,11 +25,11 @@ export function PinMoreModal({ open, kind, items, pinnedIds, onTogglePin, onClos
 
   return (
     <Modal open={open} onClose={onClose} title={kind === "friends" ? "Pin friends" : "Pin groups"}>
-      <p className="mb-4 text-sm text-purple-200/60">
+      <p className="mb-4 text-sm text-muted-foreground">
         Choose which {kind} stay pinned in the sidebar.
       </p>
       {atMax && (
-        <p className="mb-4 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-purple-200/60">
+        <p className="mb-4 rounded-xl border-border bg-secondary px-4 py-2.5 text-xs font-semibold text-muted-foreground">
           5 pins max
         </p>
       )}
@@ -40,20 +40,20 @@ export function PinMoreModal({ open, kind, items, pinnedIds, onTogglePin, onClos
           return (
             <div
               key={item.id}
-              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3"
+              className="flex items-center gap-3 rounded-2xl border-border bg-secondary p-3"
             >
               {item.image && (
                 <img src={item.image} alt={item.name} className="size-11 shrink-0 rounded-full bg-white/10 object-cover" />
               )}
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold text-white">{item.name}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">{item.name}</span>
               <Button
                 onClick={() => onTogglePin(item.id)}
                 disabled={disabled}
                 className={cn(
                   "h-auto shrink-0 rounded-full px-4 py-2 text-xs font-semibold",
                   pinned
-                    ? "border border-purple-400/40 bg-purple-500/20 text-white hover:bg-purple-500/30"
-                    : "border border-white/10 bg-white/5 text-purple-200/60 hover:bg-white/10 hover:text-white",
+                    ? "border border-accent bg-accent/15 text-foreground hover:bg-accent/25"
+                    : "border border-border bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground",
                   disabled && "pointer-events-none opacity-40"
                 )}
               >

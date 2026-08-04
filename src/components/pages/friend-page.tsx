@@ -55,28 +55,25 @@ export function FriendDetail({ id }: { id: string }) {
   return (
     <>
       {/* About Section */}
-      <div className="relative mt-8">
-        <div className="absolute -inset-1 rounded-2xl bg-linear-to-r from-purple-400 via-indigo-300 to-pink-400 opacity-20 blur-2xl"></div>
-        <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
-          <CardContent className="p-6">
-            <div className="flex flex-wrap items-center gap-5">
-              <img src={friend.avatar} alt={friend.name} className="size-20 rounded-full bg-white/10 ring-2 ring-purple-400/30" />
-              <div className="min-w-0 flex-1">
-                <h1 className="truncate text-2xl font-black text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">{friend.name}</h1>
-                <div className="flex flex-wrap items-center gap-4 mt-2">
-                  <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
-                    <Mail className="size-3.5" />
-                    {friend.email}
-                  </span>
-                </div>
-              </div>
-              <div className="ml-auto hidden sm:ml-0 lg:block">
-                <InlineActions actions={actions} />
+      <Card className="relative mt-8 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+        <CardContent className="p-6">
+          <div className="flex flex-wrap items-center gap-5">
+            <img src={friend.avatar} alt={friend.name} className="size-20 rounded-full bg-white/10 ring-2 ring-border" />
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-2xl font-black text-foreground uppercase">{friend.name}</h1>
+              <div className="flex flex-wrap items-center gap-4 mt-2">
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Mail className="size-3.5" />
+                  {friend.email}
+                </span>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="ml-auto hidden sm:ml-0 lg:block">
+              <InlineActions actions={actions} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="lg:hidden">
         <InlineActions actions={actions} layout="card" />
@@ -84,27 +81,27 @@ export function FriendDetail({ id }: { id: string }) {
 
       {/* Balance Cards */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
                 <ArrowUpRight className="size-5 text-emerald-400" />
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">Owes You</p>
+                <p className="text-xs text-muted-foreground">Owes You</p>
                 <p className="text-xl font-bold text-emerald-400">€0.00</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-xl bg-red-500/20 flex items-center justify-center">
                 <ArrowDownRight className="size-5 text-red-400" />
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">You Owe</p>
+                <p className="text-xs text-muted-foreground">You Owe</p>
                 <p className="text-xl font-bold text-red-400">€{Math.abs(friend.balance).toFixed(2)}</p>
               </div>
             </div>
@@ -113,21 +110,21 @@ export function FriendDetail({ id }: { id: string }) {
       </div>
 
       {/* Settl History */}
-      <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+      <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="text-purple-100 text-sm font-medium">Settl History</CardTitle>
-          <CardDescription className="text-purple-200/60 text-xs">All transactions with {friend.name}</CardDescription>
+          <CardTitle className="text-foreground text-sm font-medium">Settl History</CardTitle>
+          <CardDescription className="text-muted-foreground text-xs">All transactions with {friend.name}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {settlHistory.map((t) => (
-              <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
+              <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-secondary border border-border">
                 <div className="shrink-0">{statusIcon[t.status]}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-purple-100 font-medium truncate">{t.description}</p>
-                  <p className="text-xs text-purple-200/40">{t.group} · {t.date}</p>
+                  <p className="text-sm text-foreground font-medium truncate">{t.description}</p>
+                  <p className="text-xs text-muted-foreground">{t.group} · {t.date}</p>
                 </div>
-                <span className={`text-sm font-semibold ${t.status === "settled" ? "text-white" : t.status === "pending" ? "text-amber-400" : "text-red-400"}`}>
+                <span className={`text-sm font-semibold ${t.status === "settled" ? "text-foreground" : t.status === "pending" ? "text-amber-400" : "text-red-400"}`}>
                   €{t.amount.toFixed(2)}
                 </span>
               </div>

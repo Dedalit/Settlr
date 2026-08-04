@@ -26,26 +26,26 @@ export function CreateGroupModal({ open, onClose }: { open: boolean; onClose: ()
     <Modal open={open} onClose={onClose} title="Create group">
       <div className="space-y-5">
         <Field>
-          <FieldLabel className="text-purple-200/70">Group title</FieldLabel>
+          <FieldLabel className="text-foreground">Group title</FieldLabel>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Vacanza a Cecina"
-            className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+            className="h-11 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
           />
         </Field>
 
         <Field>
-          <FieldLabel className="text-purple-200/70">Group picture</FieldLabel>
+          <FieldLabel className="text-foreground">Group picture</FieldLabel>
           <div className="flex items-center gap-3">
             {picture ? (
               <img
                 src={picture}
                 alt="Group preview"
-                className="size-14 shrink-0 rounded-2xl border border-white/10 object-cover"
+                className="size-14 shrink-0 rounded-2xl border-border object-cover"
               />
             ) : (
-              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-purple-200/40">
+              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl border-border bg-secondary text-muted-foreground">
                 <ImageIcon className="size-5" />
               </div>
             )}
@@ -53,17 +53,17 @@ export function CreateGroupModal({ open, onClose }: { open: boolean; onClose: ()
               value={picture}
               onChange={(e) => setPicture(e.target.value)}
               placeholder="Paste an image URL..."
-              className="h-11 flex-1 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+              className="h-11 flex-1 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
             />
           </div>
         </Field>
 
         <Field>
-          <FieldLabel className="text-purple-200/70">Type</FieldLabel>
+          <FieldLabel className="text-foreground">Type</FieldLabel>
           <Segmented<GroupType> options={groupTypeOptions} value={type} onChange={setType} />
         </Field>
 
-        <Button className="h-12 w-full rounded-full bg-purple-500/80 text-base font-semibold text-white hover:bg-purple-400">
+        <Button className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90">
           <Plus className="size-4" /> Create group
         </Button>
       </div>
