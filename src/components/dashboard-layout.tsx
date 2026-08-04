@@ -35,8 +35,8 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
           <div className="relative z-10 flex flex-col gap-6">{children}</div>
         </div>
       </SidebarInset>
-      <div className="fixed bottom-5 right-5 z-[55]">
-        <SidebarTrigger className="size-9 rounded-full border border-border bg-indigo-500 text-white shadow-lg backdrop-blur-xl transition-colors hover:bg-indigo-500" />
+      <div className="fixed bottom-5 right-5 z-55">
+        <SidebarTrigger className="size-9 rounded-full border border-border bg-indigo-500 text-white shadow-lg backdrop-blur-xl transition-colors hover:bg-white hover:text-indigo-600 dark:bg-primary dark:hover:bg-primary/90 dark:hover:text-white" />
       </div>
     </SidebarProvider>
   )

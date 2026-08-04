@@ -135,12 +135,12 @@ export function Settls() {
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`size-10 rounded-xl flex items-center justify-center ${netBalance >= 0 ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
-                <span className="text-lg font-bold">{netBalance >= 0 ? "+" : ""}€{netBalance.toFixed(2)}</span>
+                {netBalance >= 0 ? <ArrowUpRight className="size-5 text-emerald-400" /> : <ArrowDownRight className="size-5 text-red-400" />}
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Net Balance</p>
                 <p className={`text-xl font-bold ${netBalance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                  {netBalance >= 0 ? "You're owed" : "You owe"}
+                  {netBalance >= 0 ? "+" : ""}€{netBalance.toFixed(2)}
                 </p>
               </div>
             </div>

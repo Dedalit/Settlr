@@ -110,8 +110,8 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex h-12 items-center gap-2 px-3">
-              <h2 className="text-base font-black tracking-widest text-sidebar-foreground uppercase whitespace-nowrap group-data-[collapsible=icon]:hidden">
+            <div className="flex h-14 items-center gap-2 px-3">
+              <h2 className="text-2xl font-black tracking-widest text-sidebar-foreground uppercase whitespace-nowrap group-data-[collapsible=icon]:hidden">
                 SETTLR
               </h2>
             </div>

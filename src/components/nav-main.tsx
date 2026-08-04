@@ -36,7 +36,6 @@ export function NavMain({ links }: { links: NavLink[] }) {
               render={<a href={link.url} />}
               tooltip={link.title}
               isActive={link.isActive}
-              className="border border-sidebar-border"
             >
               {link.icon}
               <span>{link.title}</span>

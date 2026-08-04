@@ -1,0 +1,36 @@
+---
+import { buttonVariants } from '@/components/ui/button'
+import FallingReceipts from '@/components/FallingReceipts.astro'
+import Layout from '@/layouts/Layout.astro'
+import { ArrowLeft } from 'lucide-react'
+---
+
+<Layout>
+  <FallingReceipts>
+    <div class="relative z-30 mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center p-6 text-center">
+      <div class="relative">
+        <div class="absolute -inset-2 rounded-2xl bg-linear-to-r from-purple-400 via-indigo-300 to-pink-400 opacity-40 blur-3xl"></div>
+        <h1 class="relative text-7xl font-black tracking-tight drop-shadow-2xl text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase sm:text-8xl md:text-[10rem]">
+          404
+        </h1>
+      </div>
+
+      <p class="mt-8 text-lg text-purple-100/90 drop-shadow sm:text-xl">
+        This receipt didn't scan.
+      </p>
+      <p class="mt-2 max-w-md text-sm text-purple-100/60 drop-shadow">
+        The page you're looking for doesn't exist or may have been moved.
+      </p>
+
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <a
+          href="/"
+          class={buttonVariants({ size: "lg", variant: "outline", className: "group border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white font-semibold px-9 py-7 text-lg rounded-full backdrop-blur-md transition-all duration-300 hover:scale-105 flex items-center gap-3" })}
+        >
+          <ArrowLeft class="size-5 transition-transform duration-300 group-hover:-translate-x-1" />
+          Go Home
+        </a>
+      </div>
+    </div>
+  </FallingReceipts>
+</Layout>
