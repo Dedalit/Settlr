@@ -36,7 +36,7 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
         </div>
       </SidebarInset>
       <div className="fixed bottom-5 right-5 z-55">
-        <SidebarTrigger className="size-9 rounded-full border border-border bg-indigo-500 text-white shadow-lg backdrop-blur-xl transition-colors hover:bg-white hover:text-indigo-600 dark:bg-primary dark:hover:bg-primary/90 dark:hover:text-white" />
+        <SidebarTrigger className="size-9 rounded-full border border-border bg-indigo-500 text-white shadow-lg backdrop-blur-xl transition-colors hover:bg-indigo-400 hover:text-white dark:bg-primary dark:hover:bg-primary/90 dark:hover:text-white" />
       </div>
     </SidebarProvider>
   )

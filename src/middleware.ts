@@ -39,7 +39,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return redirect(`/auth/signin?redirect=${encodeURIComponent(pathname)}`);
   }
 
-  context.locals.user = user;
+  (context.locals as any).user = user;
 
   const response = await next();
   response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
