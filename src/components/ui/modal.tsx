@@ -27,21 +27,21 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
 
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div
         className={cn(
-          "relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl border border-white/20 bg-[#110B3B] shadow-2xl",
+          "dashboard-glass-modal relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl border border-border bg-card/85 text-card-foreground shadow-xl backdrop-blur-xl",
           className
         )}
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#110B3B]/95 px-6 py-5 backdrop-blur-xl">
-          <h2 className="text-lg font-black uppercase tracking-tight text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80">
+        <div className="dashboard-glass-modal-header sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card/85 px-6 py-5 backdrop-blur-xl">
+          <h2 className="text-lg font-black uppercase tracking-tight text-foreground">
             {title}
           </h2>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-full p-2 text-purple-200/60 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <X className="size-5" />
           </button>

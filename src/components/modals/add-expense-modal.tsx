@@ -53,17 +53,17 @@ export function AddExpenseModal({ open, onClose, members }: AddExpenseModalProps
     <Modal open={open} onClose={onClose} title="Add expense">
       <div className="space-y-5">
         <Field>
-          <FieldLabel className="text-purple-200/70">Title</FieldLabel>
+          <FieldLabel className="text-foreground">Title</FieldLabel>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Dinner, Uber, Tickets"
-            className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+            className="h-11 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
           />
         </Field>
 
         <Field>
-          <FieldLabel className="text-purple-200/70">Amount (€)</FieldLabel>
+          <FieldLabel className="text-foreground">Amount (€)</FieldLabel>
           <Input
             type="number"
             min="0"
@@ -71,13 +71,13 @@ export function AddExpenseModal({ open, onClose, members }: AddExpenseModalProps
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+            className="h-11 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
           />
         </Field>
 
         {members.length > 1 && (
           <Field>
-            <FieldLabel className="text-purple-200/70">Split between</FieldLabel>
+            <FieldLabel className="text-foreground">Split between</FieldLabel>
             <div className="flex flex-wrap gap-2">
               {members.map((m) => (
                 <button
@@ -87,12 +87,12 @@ export function AddExpenseModal({ open, onClose, members }: AddExpenseModalProps
                   className={cn(
                     "flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors",
                     splitMembers.has(m.name)
-                      ? "border-purple-400/40 bg-purple-500/20 text-white"
-                      : "border-white/10 bg-white/5 text-purple-200/60 hover:text-white"
+                      ? "border-accent bg-accent/15 text-foreground"
+                      : "border-border bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
                   {splitMembers.has(m.name) ? (
-                    <CheckCircle2 className="size-3.5 text-purple-400" />
+                    <CheckCircle2 className="size-3.5 text-primary" />
                   ) : (
                     <Circle className="size-3.5" />
                   )}
@@ -104,7 +104,7 @@ export function AddExpenseModal({ open, onClose, members }: AddExpenseModalProps
         )}
 
         <Field>
-          <FieldLabel className="text-purple-200/70">Split type</FieldLabel>
+          <FieldLabel className="text-foreground">Split type</FieldLabel>
           <Segmented<SplitType>
             options={[
               { label: "Equal", value: "equal" },
@@ -118,7 +118,7 @@ export function AddExpenseModal({ open, onClose, members }: AddExpenseModalProps
 
         {split !== "equal" && (
           <Field>
-            <FieldLabel className="text-purple-200/70">
+            <FieldLabel className="text-foreground">
               {split === "custom" ? "Your share (€)" : "Your share (%)"}
             </FieldLabel>
             <Input
@@ -127,33 +127,33 @@ export function AddExpenseModal({ open, onClose, members }: AddExpenseModalProps
               value={share}
               onChange={(e) => setShare(e.target.value)}
               placeholder="0"
-              className="h-11 rounded-3xl border border-white/10 bg-white/5 text-purple-100 placeholder:text-purple-200/40"
+              className="h-11 rounded-3xl border-border bg-input text-foreground placeholder:text-muted-foreground"
             />
           </Field>
         )}
 
         {split === "equal" && perPerson && (
-          <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs text-purple-200/60">
+          <p className="rounded-xl border-border bg-secondary px-4 py-2.5 text-xs text-muted-foreground">
             {perPerson}
           </p>
         )}
 
         <Field>
-          <FieldLabel className="text-purple-200/70">Paid by</FieldLabel>
+          <FieldLabel className="text-foreground">Paid by</FieldLabel>
           <select
             value={payer}
             onChange={(e) => setPayer(e.target.value)}
-            className="h-11 w-full rounded-3xl border border-white/10 bg-white/5 px-4 text-sm text-purple-100 outline-none focus-visible:border-purple-400/50"
+            className="h-11 w-full rounded-3xl border-border bg-input px-4 text-sm text-foreground outline-none focus-visible:border-ring"
           >
             {members.map((m) => (
-              <option key={m.name} value={m.name} className="bg-[#110B3B] text-white">
+              <option key={m.name} value={m.name} className="bg-popover text-popover-foreground">
                 {m.name}
               </option>
             ))}
           </select>
         </Field>
 
-        <Button className="h-12 w-full rounded-full bg-purple-500/80 text-base font-semibold text-white hover:bg-purple-400">
+        <Button className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90">
           <Receipt className="size-4" /> Add expense
         </Button>
       </div>

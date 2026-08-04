@@ -65,36 +65,33 @@ export function GroupDetail({ id }: { id: string }) {
   return (
     <>
       {/* About Section */}
-      <div className="relative mt-8">
-        <div className="absolute -inset-1 rounded-2xl bg-linear-to-r from-purple-400 via-indigo-300 to-pink-400 opacity-20 blur-2xl"></div>
-        <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl overflow-hidden">
-          <div className="h-40 overflow-hidden">
-            <img src={group.image} alt={group.name} className="w-full h-full object-cover" />
+      <Card className="relative mt-8 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl overflow-hidden">
+        <div className="h-40 overflow-hidden">
+          <img src={group.image} alt={group.name} className="w-full h-full object-cover" />
+        </div>
+        <CardContent className="p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <h1 className="text-2xl font-black text-foreground uppercase">{group.name}</h1>
+            <div className="hidden lg:block">
+              <InlineActions actions={actions} />
+            </div>
           </div>
-          <CardContent className="p-6">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <h1 className="text-2xl font-black text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">{group.name}</h1>
-              <div className="hidden lg:block">
-                <InlineActions actions={actions} />
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-4 mt-3">
-              <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
-                <Users className="size-3.5" />
-                {group.members} members
-              </span>
-              <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
-                <Calendar className="size-3.5" />
-                Created {group.created}
-              </span>
-              <span className="flex items-center gap-1.5 text-xs text-purple-200/50">
-                <Receipt className="size-3.5" />
-                Total €{group.totalSpent.toFixed(2)}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <div className="flex flex-wrap items-center gap-4 mt-3">
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Users className="size-3.5" />
+              {group.members} members
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Calendar className="size-3.5" />
+              Created {group.created}
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Receipt className="size-3.5" />
+              Total €{group.totalSpent.toFixed(2)}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="lg:hidden">
         <InlineActions actions={actions} layout="card" />
@@ -102,14 +99,14 @@ export function GroupDetail({ id }: { id: string }) {
 
       {/* Balance Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`size-10 rounded-xl flex items-center justify-center ${group.balance >= 0 ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
                 {group.balance >= 0 ? <ArrowUpRight className="size-5 text-emerald-400" /> : <ArrowDownRight className="size-5 text-red-400" />}
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">Group Balance</p>
+                <p className="text-xs text-muted-foreground">Group Balance</p>
                 <p className={`text-xl font-bold ${group.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                   {group.balance >= 0 ? "+" : ""}€{Math.abs(group.balance).toFixed(2)}
                 </p>
@@ -117,28 +114,28 @@ export function GroupDetail({ id }: { id: string }) {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="size-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                <Receipt className="size-5 text-purple-400" />
+              <div className="size-10 rounded-xl bg-secondary flex items-center justify-center">
+                <Receipt className="size-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">Total Spent</p>
-                <p className="text-xl font-bold text-white">€{group.totalSpent.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">Total Spent</p>
+                <p className="text-xl font-bold text-foreground">€{group.totalSpent.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
                 <Users className="size-5 text-blue-400" />
               </div>
               <div>
-                <p className="text-xs text-purple-200/50">Members</p>
-                <p className="text-xl font-bold text-white">{group.members}</p>
+                <p className="text-xs text-muted-foreground">Members</p>
+                <p className="text-xl font-bold text-foreground">{group.members}</p>
               </div>
             </div>
           </CardContent>
@@ -149,16 +146,16 @@ export function GroupDetail({ id }: { id: string }) {
       <div className="grid gap-4 md:grid-cols-2">
         {/* Members */}
         {members.length > 0 && (
-          <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+          <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
             <CardHeader>
-              <CardTitle className="text-purple-100 text-sm font-medium">Members</CardTitle>
-              <CardDescription className="text-purple-200/60 text-xs">Balances within the group</CardDescription>
+              <CardTitle className="text-foreground text-sm font-medium">Members</CardTitle>
+              <CardDescription className="text-muted-foreground text-xs">Balances within the group</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {members.map((m) => (
-                  <div key={m.name} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-sm text-purple-100 font-medium">{m.name}</span>
+                  <div key={m.name} className="flex items-center justify-between p-3 rounded-xl bg-secondary border border-border">
+                    <span className="text-sm text-foreground font-medium">{m.name}</span>
                     <span className={`text-sm font-semibold ${m.balance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                       {m.balance >= 0 ? "+" : ""}€{Math.abs(m.balance).toFixed(2)}
                     </span>
@@ -170,23 +167,23 @@ export function GroupDetail({ id }: { id: string }) {
         )}
 
         {/* Settl History */}
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="text-purple-100 text-sm font-medium">Settl History</CardTitle>
-            <CardDescription className="text-purple-200/60 text-xs">All group expenses</CardDescription>
+            <CardTitle className="text-foreground text-sm font-medium">Settl History</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">All group expenses</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {settlHistory.map((t) => (
-                <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
+                <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-secondary border border-border">
                   <div className="shrink-0">{statusIcon[t.status]}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-purple-100 font-medium truncate">{t.description}</p>
-                    <p className="text-xs text-purple-200/40">{t.actor} · {t.date}</p>
+                    <p className="text-sm text-foreground font-medium truncate">{t.description}</p>
+                    <p className="text-xs text-muted-foreground">{t.actor} · {t.date}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs text-purple-200/30">€{t.amount.toFixed(2)}</p>
-                    <p className="text-xs text-purple-200/50">Your share: €{t.yourShare.toFixed(2)}</p>
+                    <p className="text-xs text-muted-foreground">€{t.amount.toFixed(2)}</p>
+                    <p className="text-xs text-muted-foreground">Your share: €{t.yourShare.toFixed(2)}</p>
                   </div>
                 </div>
               ))}

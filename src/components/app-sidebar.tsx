@@ -111,7 +111,7 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex h-12 items-center gap-2 px-3">
-              <h2 className="text-base font-black tracking-widest text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase whitespace-nowrap group-data-[collapsible=icon]:hidden">
+              <h2 className="text-base font-black tracking-widest text-sidebar-foreground uppercase whitespace-nowrap group-data-[collapsible=icon]:hidden">
                 SETTLR
               </h2>
             </div>

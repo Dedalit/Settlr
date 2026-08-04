@@ -86,7 +86,7 @@ export function Groups() {
       <div className="grid gap-4 md:grid-cols-2">
         {groupsList.map((group) => (
           <a key={group.id} href={`/dashboard/groups/${group.id}`} className="block group">
-            <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] hover:border-purple-400/30 transition-all overflow-hidden">
+            <Card className="relative bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl hover:bg-accent/50 hover:border-accent transition-all overflow-hidden">
               <div className="h-32 overflow-hidden">
                 <img src={group.image} alt={group.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               </div>
@@ -99,13 +99,13 @@ export function Groups() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold text-white truncate">{group.name}</p>
+                    <p className="text-base font-bold text-foreground truncate">{group.name}</p>
                     <div className="flex items-center gap-3 mt-1.5">
-                      <span className="flex items-center gap-1 text-xs text-purple-200/50">
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Users className="size-3.5" />
                         {group.members} members
                       </span>
-                      <span className="flex items-center gap-1 text-xs text-purple-200/50">
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Receipt className="size-3.5" />
                         {group.totalSettls} settls
                       </span>
@@ -124,9 +124,9 @@ export function Groups() {
                         </span>
                       </div>
                     ) : (
-                      <span className="text-xs text-purple-200/40">Settled</span>
+                      <span className="text-xs text-muted-foreground">Settled</span>
                     )}
-                    <p className="text-xs text-purple-200/30 mt-0.5">Total €{group.totalSpent.toFixed(2)}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Total €{group.totalSpent.toFixed(2)}</p>
                   </div>
                 </div>
               </CardContent>

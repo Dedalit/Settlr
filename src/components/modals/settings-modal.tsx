@@ -76,7 +76,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
     <Modal open={open} onClose={onClose} title="Settings">
       <div className="space-y-6">
         <div>
-          <label className="mb-2 block text-xs font-semibold text-purple-200/60">Theme</label>
+          <label className="mb-2 block text-xs font-semibold text-foreground">Theme</label>
           <Segmented
             options={[
               { label: "Light", value: "light" },
@@ -89,7 +89,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         </div>
 
         <div>
-          <label className="mb-2 block text-xs font-semibold text-purple-200/60">Currency</label>
+          <label className="mb-2 block text-xs font-semibold text-foreground">Currency</label>
           <Segmented
             options={[
               { label: "€ EUR", value: "EUR" },
@@ -102,7 +102,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         </div>
 
         <div>
-          <label className="mb-2 block text-xs font-semibold text-purple-200/60">Language</label>
+          <label className="mb-2 block text-xs font-semibold text-foreground">Language</label>
           <Segmented
             options={[
               { label: "English", value: "EN" },
@@ -122,7 +122,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
         <button
           onClick={() => update(defaultSettings)}
-          className="w-full rounded-full border border-white/10 bg-white/5 py-2.5 text-xs font-semibold text-purple-200/60 transition-colors hover:bg-white/10 hover:text-white"
+          className="w-full rounded-full border-border bg-secondary py-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         >
           Reset to defaults
         </button>

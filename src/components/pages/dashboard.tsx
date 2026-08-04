@@ -44,7 +44,7 @@ const pieData = [
   { name: "Bills", value: 20 },
 ]
 
-const PIE_COLORS = ["#7161EF", "#3B2991", "#C084FC", "#4C32A8"]
+const PIE_COLORS = ["#6366F1", "#0EA5E9", "#F59E0B", "#10B981"]
 
 export function Dashboard() {
   return (
@@ -52,41 +52,41 @@ export function Dashboard() {
       <PageHeader title="Welcome back" subtitle="Here&apos;s what&apos;s happening with your shared expenses." />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <InfoCard title="Total Balance" value="€2,478.50" description="Across all groups" icon={<ReceiptIcon className="size-4 text-purple-300" />} trend={{ value: "+12.5%", up: true }} />
+        <InfoCard title="Total Balance" value="€2,478.50" description="Across all groups" icon={<ReceiptIcon className="size-4 text-muted-foreground" />} trend={{ value: "+12.5%", up: true }} />
         <InfoCard title="You Owe" value="€186.30" description="To 3 friends" icon={<ArrowDownRight className="size-4 text-red-400" />} trend={{ value: "-8.2%", up: false }} />
         <InfoCard title="Owed to You" value="€342.80" description="From 5 friends" icon={<ArrowUpRight className="size-4 text-emerald-400" />} trend={{ value: "+5.1%", up: true }} />
         <InfoCard title="Pending Settls" value="12" description="Awaiting response" icon={<Clock className="size-4 text-amber-400" />} trend={{ value: "3 due today", up: true }} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-7">
-        <Card className="md:col-span-4 bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="md:col-span-4 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-purple-100 text-sm font-medium">Weekly Spending</CardTitle>
-            <CardDescription className="text-purple-200/60 text-xs">Your share this week</CardDescription>
+            <CardTitle className="text-foreground text-sm font-medium">Weekly Spending</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">Your share this week</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={spendingData}>
                 <defs>
                   <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7161EF" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#7161EF" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={11} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={11} />
-                <Tooltip contentStyle={{ backgroundColor: "rgba(17,11,59,0.9)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "12px", color: "#fff", fontSize: 12 }} />
-                <Area type="monotone" dataKey="amount" stroke="#7161EF" strokeWidth={2} fill="url(#colorAmount)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
+                <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+                <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} />
+                <Area type="monotone" dataKey="amount" stroke="#6366F1" strokeWidth={2} fill="url(#colorAmount)" />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-3 bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="md:col-span-3 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-purple-100 text-sm font-medium">Spending by Category</CardTitle>
-            <CardDescription className="text-purple-200/60 text-xs">This month breakdown</CardDescription>
+            <CardTitle className="text-foreground text-sm font-medium">Spending by Category</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">This month breakdown</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
@@ -96,14 +96,14 @@ export function Dashboard() {
                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: "rgba(17,11,59,0.9)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "12px", color: "#fff", fontSize: 12 }} formatter={(value: number) => `${value}%`} />
+                <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} formatter={(value: number) => `${value}%`} />
               </PieChart>
             </ResponsiveContainer>
             <div className="flex flex-wrap gap-3 justify-center mt-2">
               {pieData.map((item, i) => (
                 <div key={item.name} className="flex items-center gap-1.5">
                   <div className="size-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i] }} />
-                  <span className="text-xs text-purple-200/60">{item.name}</span>
+                  <span className="text-xs text-muted-foreground">{item.name}</span>
                 </div>
               ))}
             </div>
@@ -112,29 +112,29 @@ export function Dashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-purple-100 text-sm font-medium">Monthly Overview</CardTitle>
-            <CardDescription className="text-purple-200/60 text-xs">Total vs settled expenses</CardDescription>
+            <CardTitle className="text-foreground text-sm font-medium">Monthly Overview</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">Total vs settled expenses</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={monthlyData} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={11} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={11} />
-                <Tooltip contentStyle={{ backgroundColor: "rgba(17,11,59,0.9)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "12px", color: "#fff", fontSize: 12 }} />
-                <Bar dataKey="total" fill="#7161EF" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="settled" fill="#C084FC" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
+                <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+                <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} />
+                <Bar dataKey="total" fill="#6366F1" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="settled" fill="#818CF8" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
           <CardHeader className="pb-2">
-            <CardTitle className="text-purple-100 text-sm font-medium">Recent Activity</CardTitle>
-            <CardDescription className="text-purple-200/60 text-xs">Latest settlements</CardDescription>
+            <CardTitle className="text-foreground text-sm font-medium">Recent Activity</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">Latest settlements</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <ActivityItem name="Nasty" description="Paid you €24.50 for Cecina trip" time="2h ago" icon={<CheckCircle2 className="size-4 text-emerald-400" />} />
@@ -150,16 +150,16 @@ export function Dashboard() {
 
 function InfoCard({ title, value, description, icon, trend }: { title: string; value: string; description: string; icon: React.ReactNode; trend: { value: string; up: boolean } }) {
   return (
-    <Card className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl">
+    <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-purple-200/80 text-xs font-medium">{title}</CardTitle>
+        <CardTitle className="text-muted-foreground text-xs font-medium">{title}</CardTitle>
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-white">{value}</div>
+        <div className="text-2xl font-bold text-foreground">{value}</div>
         <div className="flex items-center gap-1 mt-1">
           <span className={`text-xs font-medium ${trend.up ? "text-emerald-400" : "text-red-400"}`}>{trend.value}</span>
-          <span className="text-xs text-purple-200/50">{description}</span>
+          <span className="text-xs text-muted-foreground">{description}</span>
         </div>
       </CardContent>
     </Card>
@@ -168,13 +168,13 @@ function InfoCard({ title, value, description, icon, trend }: { title: string; v
 
 function ActivityItem({ name, description, time, icon }: { name: string; description: string; time: string; icon: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+    <div className="flex items-start gap-3 p-3 rounded-xl bg-secondary border-border hover:bg-accent/50 transition-colors">
       <div className="mt-0.5">{icon}</div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-purple-100 font-medium truncate">{name}</p>
-        <p className="text-xs text-purple-200/60 truncate">{description}</p>
+        <p className="text-sm text-foreground font-medium truncate">{name}</p>
+        <p className="text-xs text-muted-foreground truncate">{description}</p>
       </div>
-      <span className="text-xs text-purple-200/40 whitespace-nowrap">{time}</span>
+      <span className="text-xs text-muted-foreground whitespace-nowrap">{time}</span>
     </div>
   )
 }

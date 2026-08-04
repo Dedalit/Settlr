@@ -23,15 +23,20 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
   
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="dashboard-shell">
       <AppSidebar pathname={pathname} user={user} />
       <SidebarInset>
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0 bg-linear-to-br from-[#110B3B] via-[#1A1250] to-[#0F0A2E] min-h-svh">
-          {children}
+        <div className="relative flex min-h-svh flex-1 flex-col gap-6 overflow-hidden bg-linear-to-br from-background via-background to-muted/60 p-6 pt-0">
+          <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
+            <div className="absolute -top-32 -left-24 size-96 rounded-full bg-primary/15 blur-3xl" />
+            <div className="absolute top-1/4 right-0 size-80 rounded-full bg-sky-500/10 blur-3xl" />
+            <div className="absolute bottom-0 left-1/3 size-96 rounded-full bg-violet-500/10 blur-3xl" />
+          </div>
+          <div className="relative z-10 flex flex-col gap-6">{children}</div>
         </div>
       </SidebarInset>
       <div className="fixed bottom-5 right-5 z-[55]">
-        <SidebarTrigger className="size-9 rounded-full bg-[#110B3B]/80 backdrop-blur-xl border border-white/20 shadow-2xl hover:bg-white/10 transition-colors" />
+        <SidebarTrigger className="size-9 rounded-full border border-border bg-indigo-500 text-white shadow-lg backdrop-blur-xl transition-colors hover:bg-indigo-500" />
       </div>
     </SidebarProvider>
   )
@@ -39,15 +44,14 @@ export function DashboardLayout({ children, user }: DashboardLayoutProps) {
 
 export function PageHeader({ title, subtitle, actions }: { title: string; subtitle?: string; actions?: React.ReactNode }) {
   return (
-    <div className="relative mt-8">
-      <div className="absolute -inset-1 rounded-2xl bg-linear-to-r from-purple-400 via-indigo-300 to-pink-400 opacity-30 blur-2xl"></div>
+    <div className="mt-8">
       <div className="relative flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-linear-to-b from-white via-white/95 to-purple-200/80 uppercase">
+          <h1 className="text-3xl font-black tracking-tight text-foreground uppercase sm:text-4xl">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-purple-200/70 text-sm">{subtitle}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
           )}
         </div>
         {actions && (
