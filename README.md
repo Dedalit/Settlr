@@ -68,6 +68,15 @@ pnpm dev        # → http://localhost:4321
 
 Copy `.env.example` → `.env` and fill in your Supabase credentials.
 
+### Scripts
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start the dev server → http://localhost:4321 |
+| `pnpm build` | Production build (SSR standalone → `dist/`) |
+| `pnpm preview` | Preview the production build |
+| `pnpm astro` | Raw Astro CLI passthrough |
+
 ### Local Supabase
 
 ```bash
@@ -76,12 +85,16 @@ supabase start
 # Confirmations are disabled locally
 ```
 
-## ✦ Authors
+## ✦ Authors / Creators
 
 - **Gothloverino**
+- **Decoil/SadSuite**
+
+## ✦ Special Mention
+
 - **Mikbrog**
-- **SadSuite**
+
 
 ## ✦ License
 
-MIT
+Distributed under the [MIT License](./LICENSE).
