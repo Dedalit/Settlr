@@ -29,7 +29,7 @@ export function CardActionsMenu({ label, icon, onAction, buttonClassName }: Card
               e.stopPropagation()
             }}
             className={cn(
-              "rounded-full border border-white/10 bg-[#0F0A2E]/60 p-2 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white",
+              "rounded-full border border-border bg-card/80 p-2 text-muted-foreground backdrop-blur-xl transition-colors hover:bg-accent hover:text-accent-foreground",
               buttonClassName
             )}
           />

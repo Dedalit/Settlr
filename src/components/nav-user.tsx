@@ -86,7 +86,7 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
+              <SidebarMenuButton size="lg" className="aria-expanded:bg-white/15" />
             }
           >
             <Avatar>

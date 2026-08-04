@@ -94,7 +94,7 @@ export function Friends() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {friendsList.map((friend) => (
           <a key={friend.id} href={`/dashboard/friends/${friend.id}`} className="block group">
-            <Card className="relative bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] hover:border-purple-400/30 transition-all">
+            <Card className="relative bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl hover:bg-accent/50 hover:border-accent transition-all">
               <CardContent className="p-5">
                 <CardActionsMenu
                   buttonClassName="absolute right-3 top-3"
@@ -105,14 +105,14 @@ export function Friends() {
                 <div className="flex items-center gap-4">
                   <img src={friend.avatar} alt={friend.name} className="size-14 rounded-full bg-white/10" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{friend.name}</p>
-                    <p className="text-xs text-purple-200/40">Active {friend.lastActive}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{friend.name}</p>
+                    <p className="text-xs text-muted-foreground">Active {friend.lastActive}</p>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="mt-4 flex items-center justify-between pt-4 border-t border-border">
                   <div className="flex items-center gap-1.5">
-                    <Users className="size-3.5 text-purple-300/50" />
-                    <span className="text-xs text-purple-200/50">{friend.settls} settls</span>
+                    <Users className="size-3.5 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">{friend.settls} settls</span>
                   </div>
                   {friend.balance !== 0 ? (
                     <div className="flex items-center gap-1">
@@ -129,7 +129,7 @@ export function Friends() {
                       )}
                     </div>
                   ) : (
-                    <span className="text-xs text-purple-200/40">Settled up</span>
+                    <span className="text-xs text-muted-foreground">Settled up</span>
                   )}
                 </div>
               </CardContent>

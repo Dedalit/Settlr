@@ -23,7 +23,7 @@ const activities = [
     action: "added expense: Drinks at Bar — €32.00 (split 4 ways)",
     amount: "€8.00 your share",
     time: "5 hours ago",
-    icon: <Tag className="size-4 text-purple-400" />,
+    icon: <Tag className="size-4 text-muted-foreground" />,
   },
   {
     id: 3,
@@ -63,7 +63,7 @@ const activities = [
     action: "added expense: Tickets — €180.00 (split 3 ways)",
     amount: "€60.00 your share",
     time: "3 days ago",
-    icon: <Tag className="size-4 text-purple-400" />,
+    icon: <Tag className="size-4 text-muted-foreground" />,
   },
   {
     id: 7,
@@ -93,7 +93,7 @@ const activities = [
     action: "added expense: Grocery run — €45.80 (split 4 ways)",
     amount: "€11.45 your share",
     time: "1 week ago",
-    icon: <Tag className="size-4 text-purple-400" />,
+    icon: <Tag className="size-4 text-muted-foreground" />,
   },
   {
     id: 10,
@@ -110,11 +110,11 @@ const activities = [
 function ActivityIcon({ type }: { type: string }) {
   const bgMap: Record<string, string> = {
     settlement: "bg-emerald-500/20 border-emerald-500/30",
-    expense: "bg-purple-500/20 border-purple-500/30",
+    expense: "bg-secondary border-border",
     rename: "bg-blue-500/20 border-blue-500/30",
     member: "bg-amber-500/20 border-amber-500/30",
   }
-  return bgMap[type] || "bg-white/10 border-white/20"
+  return bgMap[type] || "bg-secondary border-border"
 }
 
 export function Activity() {
@@ -132,7 +132,7 @@ export function Activity() {
 
       <div className="space-y-3">
         {activities.map((item) => (
-          <Card key={item.id} className="bg-[#110B3B]/60 backdrop-blur-xl border-white/20 shadow-2xl hover:bg-white/[0.07] transition-colors">
+          <Card key={item.id} className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl hover:bg-accent/50 transition-colors">
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
                 <div className={`size-10 rounded-xl flex items-center justify-center border ${ActivityIcon({ type: item.type })}`}>
@@ -141,17 +141,17 @@ export function Activity() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm text-purple-100">
+                      <p className="text-sm text-foreground">
                         <span className="font-semibold">{item.actor}</span>{" "}
-                        <span className="text-purple-200/70">{item.action}</span>
+                        <span className="text-muted-foreground">{item.action}</span>
                       </p>
-                      <p className="text-xs text-purple-200/40 mt-0.5">{item.group}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.group}</p>
                     </div>
                     {item.amount && (
-                      <span className="text-sm font-semibold text-white whitespace-nowrap">{item.amount}</span>
+                      <span className="text-sm font-semibold text-foreground whitespace-nowrap">{item.amount}</span>
                     )}
                   </div>
-                  <p className="text-xs text-purple-200/30 mt-1">{item.time}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{item.time}</p>
                 </div>
               </div>
             </CardContent>
@@ -167,8 +167,8 @@ function FilterChip({ label, active }: { label: string; active?: boolean }) {
     <button
       className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
         active
-          ? "bg-purple-500/30 text-purple-200 border border-purple-400/40"
-          : "bg-white/5 text-purple-200/50 border border-white/10 hover:bg-white/10 hover:text-purple-200/70"
+          ? "bg-primary/10 text-primary border-primary/30"
+          : "bg-secondary text-muted-foreground border-border hover:bg-accent hover:text-foreground"
       }`}
     >
       {label}
