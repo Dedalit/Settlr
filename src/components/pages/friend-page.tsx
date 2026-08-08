@@ -5,38 +5,112 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { InlineActions } from "@/components/inline-actions"
 import { AddExpenseModal } from "@/components/modals/add-expense-modal"
 import { SettlUpModal } from "@/components/modals/settl-up-modal"
-import { ArrowUpRight, ArrowDownRight, Clock, CheckCircle2, AlertCircle, Mail, Receipt, HandCoins } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ArrowUpRight, ArrowDownRight, Mail, Receipt, HandCoins, Hand, CheckCircle2, Loader2 } from "lucide-react"
 
-const statusIcon = {
-  settled: <CheckCircle2 className="size-4 text-emerald-400" />,
-  pending: <Clock className="size-4 text-amber-400" />,
-  overdue: <AlertCircle className="size-4 text-red-400" />,
+interface FriendData {
+  id: number
+  name: string
+  avatar: string
+  email: string
+  balance: number
 }
 
-const friendProfiles: Record<string, { name: string; avatar: string; email: string; balance: number }> = {
-  nasty: { name: "Nasty", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Nasty&backgroundColor=b6e3f4", email: "nasty@example.com", balance: -24.5 },
-  pippo: { name: "Pippo", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Pippo&backgroundColor=c0aede", email: "pippo@example.com", balance: 27.3 },
-  giovanage: { name: "GiovAnge", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=GiovAnge&backgroundColor=d1d4f9", email: "giovanage@example.com", balance: 37.0 },
-  grecia: { name: "Grecia <3", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=Grecia&backgroundColor=ffd5dc", email: "grecia@example.com", balance: -42.0 },
+interface Transaction {
+  id: string
+  kind: "expense" | "settlement"
+  group: string
+  description: string
+  amount: number
+  date: string
+  direction: "owed-to-you" | "you-owe" | "you-paid" | "settled"
 }
 
-const settlHistory = [
-  { id: 1, group: "Vacanza a Cecina", description: "You paid for Airbnb — split 4 ways", amount: 47.5, status: "settled" as const, date: "Jul 25, 2026" },
-  { id: 2, group: "I Tre Topolini", description: "Grocery run split", amount: 15.0, status: "pending" as const, date: "Jul 24, 2026" },
-  { id: 3, group: "The Weeknd 27/7", description: "Concert tickets", amount: 60.0, status: "settled" as const, date: "Jul 20, 2026" },
-  { id: 4, group: "Vacanza a Cecina", description: "Gas money", amount: 12.3, status: "overdue" as const, date: "Jul 18, 2026" },
-]
+interface FriendResponse {
+  friend: FriendData
+  transactions: Transaction[]
+}
+
+function timeAgo(iso: string) {
+  const then = new Date(iso).getTime()
+  if (Number.isNaN(then)) return "recently"
+  const seconds = Math.max(1, Math.floor((Date.now() - then) / 1000))
+  if (seconds < 60) return "just now"
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d ago`
+  const weeks = Math.floor(days / 7)
+  if (weeks < 5) return `${weeks}w ago`
+  const months = Math.floor(days / 30)
+  if (months < 12) return `${months}mo ago`
+  return `${Math.floor(days / 365)}y ago`
+}
+
+const initials = (name: string) => name.trim().slice(0, 2).toUpperCase()
 
 export function FriendDetail({ id }: { id: string }) {
-  const friend = friendProfiles[id] || { name: "Unknown", avatar: "", email: "", balance: 0 }
+  const [data, setData] = React.useState<FriendResponse | null>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState(false)
   const [expenseOpen, setExpenseOpen] = React.useState(false)
   const [settlOpen, setSettlOpen] = React.useState(false)
 
-  const expenseMembers = [
-    { name: "You" },
-    { name: friend.name, avatar: friend.avatar },
-  ]
-  const settlTargets = [{ name: friend.name, avatar: friend.avatar, amount: Math.abs(friend.balance) }]
+  const load = React.useCallback(async () => {
+    try {
+      const res = await fetch(`/api/friends/${id}`)
+      if (!res.ok) throw new Error("Failed to load friend")
+      const json = await res.json()
+      setData(json)
+      setError(false)
+    } catch {
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [id])
+
+  React.useEffect(() => {
+    load()
+  }, [load])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error || !data) {
+    return (
+      <Card className="mt-8 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+        <CardContent className="p-8 text-center">
+          <p className="text-sm text-muted-foreground">Couldn't load this friend.</p>
+          <button
+            type="button"
+            onClick={load}
+            className="mt-4 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const friend = data.friend
+  const transactions = data.transactions
+  const owesYou = friend.balance > 0 ? friend.balance : 0
+  const youOwe = friend.balance < 0 ? Math.abs(friend.balance) : 0
+
+  const expenseMembers = [{ id: friend.id, name: friend.name, avatar: friend.avatar }]
+  const settlTargets =
+    friend.balance !== 0
+      ? [{ id: Number(friend.id), name: friend.name, avatar: friend.avatar, amount: Math.abs(friend.balance) }]
+      : []
 
   const actions = [
     {
@@ -44,13 +118,41 @@ export function FriendDetail({ id }: { id: string }) {
       icon: <Receipt className="size-4" />,
       onClick: () => setExpenseOpen(true),
     },
-    {
-      label: "Settl Up",
-      icon: <HandCoins className="size-4" />,
-      variant: "primary" as const,
-      onClick: () => setSettlOpen(true),
-    },
+    ...(friend.balance !== 0
+      ? [
+          {
+            label: "Settl Up",
+            icon: <HandCoins className="size-4" />,
+            variant: "primary" as const,
+            onClick: () => setSettlOpen(true),
+          },
+        ]
+      : []),
   ]
+
+  const txIcon = (t: Transaction) => {
+    if (t.kind === "settlement") return <CheckCircle2 className="size-4 text-emerald-400" />
+    switch (t.direction) {
+      case "you-owe":
+        return <ArrowDownRight className="size-4 text-red-400" />
+      case "owed-to-you":
+        return <ArrowUpRight className="size-4 text-emerald-400" />
+      case "you-paid":
+      default:
+        return <Hand className="size-4 text-amber-400" />
+    }
+  }
+
+  const txAmountClass = (t: Transaction) => {
+    if (t.kind === "settlement" || t.direction === "owed-to-you") return "text-emerald-400"
+    if (t.direction === "you-owe") return "text-red-400"
+    return "text-foreground"
+  }
+
+  const txDescription = (t: Transaction) => {
+    if (t.kind === "settlement" && !t.description) return `You settled up with ${friend.name}`
+    return t.description
+  }
 
   return (
     <>
@@ -58,7 +160,10 @@ export function FriendDetail({ id }: { id: string }) {
       <Card className="relative mt-8 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
         <CardContent className="p-6">
           <div className="flex flex-wrap items-center gap-5">
-            <img src={friend.avatar} alt={friend.name} className="size-20 rounded-full bg-white/10 ring-2 ring-border" />
+            <Avatar className="size-20 ring-2 ring-border">
+              <AvatarImage src={friend.avatar} alt={friend.name} />
+              <AvatarFallback className="text-lg">{initials(friend.name)}</AvatarFallback>
+            </Avatar>
             <div className="min-w-0 flex-1">
               <h1 className="truncate text-2xl font-black text-foreground uppercase">{friend.name}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-2">
@@ -89,7 +194,7 @@ export function FriendDetail({ id }: { id: string }) {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Owes You</p>
-                <p className="text-xl font-bold text-emerald-400">€0.00</p>
+                <p className="text-xl font-bold text-emerald-400">€{owesYou.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
@@ -102,7 +207,7 @@ export function FriendDetail({ id }: { id: string }) {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">You Owe</p>
-                <p className="text-xl font-bold text-red-400">€{Math.abs(friend.balance).toFixed(2)}</p>
+                <p className="text-xl font-bold text-red-400">€{youOwe.toFixed(2)}</p>
               </div>
             </div>
           </CardContent>
@@ -116,24 +221,42 @@ export function FriendDetail({ id }: { id: string }) {
           <CardDescription className="text-muted-foreground text-xs">All transactions with {friend.name}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {settlHistory.map((t) => (
-              <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-secondary border border-border">
-                <div className="shrink-0">{statusIcon[t.status]}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground font-medium truncate">{t.description}</p>
-                  <p className="text-xs text-muted-foreground">{t.group} · {t.date}</p>
+          {transactions.length === 0 ? (
+            <p className="py-6 text-center text-sm text-muted-foreground">No transactions yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {transactions.map((t) => (
+                <div key={t.id} className="flex items-center gap-4 p-3 rounded-xl bg-secondary border border-border">
+                  <div className="shrink-0">{txIcon(t)}</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground font-medium truncate">{txDescription(t)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t.group ? `${t.group} · ` : ""}
+                      {timeAgo(t.date)}
+                    </p>
+                  </div>
+                  <span className={`text-sm font-semibold shrink-0 ${txAmountClass(t)}`}>
+                    €{t.amount.toFixed(2)}
+                  </span>
                 </div>
-                <span className={`text-sm font-semibold ${t.status === "settled" ? "text-foreground" : t.status === "pending" ? "text-amber-400" : "text-red-400"}`}>
-                  €{t.amount.toFixed(2)}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
-      <AddExpenseModal open={expenseOpen} onClose={() => setExpenseOpen(false)} members={expenseMembers} />
-      <SettlUpModal open={settlOpen} onClose={() => setSettlOpen(false)} targets={settlTargets} />
+      <AddExpenseModal
+        open={expenseOpen}
+        onClose={() => setExpenseOpen(false)}
+        friendId={friend.id}
+        members={expenseMembers}
+        onCreated={load}
+      />
+      <SettlUpModal
+        open={settlOpen}
+        onClose={() => setSettlOpen(false)}
+        targets={settlTargets}
+        onCompleted={load}
+      />
     </>
   )
 }

@@ -1,7 +1,9 @@
 "use client"
 
+import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import {
   Area,
   AreaChart,
@@ -16,134 +18,192 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { ArrowUpRight, ArrowDownRight, Receipt as ReceiptIcon, CheckCircle2, Clock } from "lucide-react"
-
-const spendingData = [
-  { name: "Lun", amount: 120 },
-  { name: "Mar", amount: 85 },
-  { name: "Mer", amount: 200 },
-  { name: "Gio", amount: 45 },
-  { name: "Ven", amount: 310 },
-  { name: "Sab", amount: 175 },
-  { name: "Dom", amount: 90 },
-]
-
-const monthlyData = [
-  { name: "Gen", total: 420, settled: 380 },
-  { name: "Feb", total: 350, settled: 310 },
-  { name: "Mar", total: 510, settled: 490 },
-  { name: "Apr", total: 280, settled: 260 },
-  { name: "Mag", total: 630, settled: 580 },
-  { name: "Giu", total: 470, settled: 440 },
-]
-
-const pieData = [
-  { name: "Food", value: 35 },
-  { name: "Travel", value: 25 },
-  { name: "Entertainment", value: 20 },
-  { name: "Bills", value: 20 },
-]
+import { ArrowUpRight, ArrowDownRight, Receipt as ReceiptIcon, CheckCircle2, Clock, LoaderCircle, AlertCircle, RefreshCw } from "lucide-react"
 
 const PIE_COLORS = ["#6366F1", "#0EA5E9", "#F59E0B", "#10B981"]
 
+interface DashboardStats {
+  totalBalance: number
+  youOwe: number
+  owedToYou: number
+  pendingSettls: number
+}
+
+interface DashboardData {
+  stats: DashboardStats
+  weeklySpending: { name: string; amount: number }[]
+  categorySpending: { name: string; value: number }[]
+  monthlyOverview: { name: string; total: number; settled: number }[]
+  recentActivity: { name: string; description: string; time: string; kind: string }[]
+}
+
+function fmt(amount: number) {
+  return `€${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
+function timeAgo(iso: string) {
+  const then = new Date(iso)
+  if (Number.isNaN(then.getTime())) return iso
+  const seconds = Math.round((Date.now() - then.getTime()) / 1000)
+  if (seconds < 60) return "just now"
+  const minutes = Math.round(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.round(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.round(hours / 24)
+  if (days < 7) return `${days}d ago`
+  const weeks = Math.round(days / 7)
+  if (weeks < 5) return `${weeks}w ago`
+  return then.toLocaleDateString()
+}
+
+function activityIcon(kind: string) {
+  if (kind === "paid" || kind === "settled") return <CheckCircle2 className="size-4 text-emerald-400" />
+  return <Clock className="size-4 text-amber-400" />
+}
+
 export function Dashboard() {
+  const [data, setData] = React.useState<DashboardData | null>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+
+  const load = React.useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/dashboard")
+      if (!res.ok) throw new Error("Failed to load dashboard data")
+      const json = (await res.json()) as DashboardData
+      setData(json)
+    } catch {
+      setError("Couldn't load your dashboard. Check your connection and try again.")
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    load()
+  }, [load])
+
   return (
     <>
       <PageHeader title="Welcome back" subtitle="Here&apos;s what&apos;s happening with your shared expenses." />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <InfoCard title="Total Balance" value="€2,478.50" description="Across all groups" icon={<ReceiptIcon className="size-4 text-muted-foreground" />} trend={{ value: "+12.5%", up: true }} />
-        <InfoCard title="You Owe" value="€186.30" description="To 3 friends" icon={<ArrowDownRight className="size-4 text-red-400" />} trend={{ value: "-8.2%", up: false }} />
-        <InfoCard title="Owed to You" value="€342.80" description="From 5 friends" icon={<ArrowUpRight className="size-4 text-emerald-400" />} trend={{ value: "+5.1%", up: true }} />
-        <InfoCard title="Pending Settls" value="12" description="Awaiting response" icon={<Clock className="size-4 text-amber-400" />} trend={{ value: "3 due today", up: true }} />
-      </div>
+      {loading ? (
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <LoadingCard key={i} />
+            ))}
+          </div>
+          <div className="grid gap-4 md:grid-cols-7">
+            <LoadingCard className="md:col-span-4" />
+            <LoadingCard className="md:col-span-3" />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <LoadingCard />
+            <LoadingCard />
+          </div>
+        </div>
+      ) : error ? (
+        <ErrorCard message={error} onRetry={load} />
+      ) : data ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <InfoCard title="Total Balance" value={fmt(data.stats.totalBalance)} description="Across all groups" icon={<ReceiptIcon className="size-4 text-muted-foreground" />} trend={{ value: "Today", up: true }} />
+            <InfoCard title="You Owe" value={fmt(data.stats.youOwe)} description="To friends" icon={<ArrowDownRight className="size-4 text-red-400" />} trend={{ value: "Today", up: false }} />
+            <InfoCard title="Owed to You" value={fmt(data.stats.owedToYou)} description="From friends" icon={<ArrowUpRight className="size-4 text-emerald-400" />} trend={{ value: "Today", up: true }} />
+            <InfoCard title="Pending Settls" value={String(data.stats.pendingSettls)} description="Awaiting response" icon={<Clock className="size-4 text-amber-400" />} trend={{ value: "Today", up: true }} />
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-7">
-        <Card className="md:col-span-4 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-foreground text-sm font-medium">Weekly Spending</CardTitle>
-            <CardDescription className="text-muted-foreground text-xs">Your share this week</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={spendingData}>
-                <defs>
-                  <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} />
-                <Area type="monotone" dataKey="amount" stroke="#6366F1" strokeWidth={2} fill="url(#colorAmount)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+          <div className="grid gap-4 md:grid-cols-7">
+            <Card className="md:col-span-4 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-foreground text-sm font-medium">Weekly Spending</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">Your share this week</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={220}>
+                  <AreaChart data={data.weeklySpending}>
+                    <defs>
+                      <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
+                    <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+                    <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} />
+                    <Area type="monotone" dataKey="amount" stroke="#6366F1" strokeWidth={2} fill="url(#colorAmount)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        <Card className="md:col-span-3 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-foreground text-sm font-medium">Spending by Category</CardTitle>
-            <CardDescription className="text-muted-foreground text-xs">This month breakdown</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={4} dataKey="value">
-                  {pieData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+            <Card className="md:col-span-3 bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-foreground text-sm font-medium">Spending by Category</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">This month breakdown</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie data={data.categorySpending} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={4} dataKey="value">
+                      {data.categorySpending.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} formatter={(value: number) => fmt(value)} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex flex-wrap gap-3 justify-center mt-2">
+                  {data.categorySpending.map((item, i) => (
+                    <div key={item.name} className="flex items-center gap-1.5">
+                      <div className="size-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                      <span className="text-xs text-muted-foreground">{item.name}</span>
+                    </div>
                   ))}
-                </Pie>
-                <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} formatter={(value: number) => `${value}%`} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex flex-wrap gap-3 justify-center mt-2">
-              {pieData.map((item, i) => (
-                <div key={item.name} className="flex items-center gap-1.5">
-                  <div className="size-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i] }} />
-                  <span className="text-xs text-muted-foreground">{item.name}</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-foreground text-sm font-medium">Monthly Overview</CardTitle>
-            <CardDescription className="text-muted-foreground text-xs">Total vs settled expenses</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={monthlyData} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} />
-                <Bar dataKey="total" fill="#6366F1" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="settled" fill="#818CF8" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-foreground text-sm font-medium">Monthly Overview</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">Total vs settled expenses</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={data.monthlyOverview} barGap={4}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={11} />
+                    <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+                    <Tooltip contentStyle={{ backgroundColor: "var(--popover)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--popover-foreground)", fontSize: 12 }} />
+                    <Bar dataKey="total" fill="#6366F1" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="settled" fill="#818CF8" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-foreground text-sm font-medium">Recent Activity</CardTitle>
-            <CardDescription className="text-muted-foreground text-xs">Latest settlements</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <ActivityItem name="Nasty" description="Paid you €24.50 for Cecina trip" time="2h ago" icon={<CheckCircle2 className="size-4 text-emerald-400" />} />
-            <ActivityItem name="Pippo" description="Owes you €15.00 for pizza" time="5h ago" icon={<Clock className="size-4 text-amber-400" />} />
-            <ActivityItem name="Grecia <3" description="Settled €42.00 — Concert tickets" time="1d ago" icon={<CheckCircle2 className="size-4 text-emerald-400" />} />
-            <ActivityItem name="GiovAnge" description="Owes you €8.50 for coffee" time="2d ago" icon={<Clock className="size-4 text-amber-400" />} />
-          </CardContent>
-        </Card>
-      </div>
+            <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-foreground text-sm font-medium">Recent Activity</CardTitle>
+                <CardDescription className="text-muted-foreground text-xs">Latest settlements</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {data.recentActivity.map((item, i) => (
+                  <ActivityItem key={i} name={item.name} description={item.description} time={timeAgo(item.time)} icon={activityIcon(item.kind)} />
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      ) : null}
     </>
   )
 }
@@ -176,5 +236,27 @@ function ActivityItem({ name, description, time, icon }: { name: string; descrip
       </div>
       <span className="text-xs text-muted-foreground whitespace-nowrap">{time}</span>
     </div>
+  )
+}
+
+function LoadingCard({ className }: { className?: string }) {
+  return (
+    <Card className={`bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl flex items-center justify-center gap-2 py-12 ${className ?? ""}`}>
+      <LoaderCircle className="size-5 animate-spin text-muted-foreground" />
+      <span className="text-sm text-muted-foreground">Loading…</span>
+    </Card>
+  )
+}
+
+function ErrorCard({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl flex flex-col items-center justify-center gap-3 py-12">
+      <AlertCircle className="size-6 text-red-400" />
+      <p className="text-sm text-muted-foreground max-w-sm text-center">{message}</p>
+      <Button variant="outline" size="sm" onClick={onRetry}>
+        <RefreshCw className="size-4" />
+        Retry
+      </Button>
+    </Card>
   )
 }

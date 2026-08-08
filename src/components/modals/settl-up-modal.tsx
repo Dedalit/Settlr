@@ -3,10 +3,11 @@
 import * as React from "react"
 import { Modal } from "@/components/ui/modal"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, Circle, HandCoins } from "lucide-react"
+import { CheckCircle2, Circle, HandCoins, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export interface SettlTarget {
+  id: number
   name: string
   avatar?: string
   amount: number
@@ -15,19 +16,53 @@ export interface SettlTarget {
 interface SettlUpModalProps {
   open: boolean
   onClose: () => void
+  groupId?: number | null
   targets: SettlTarget[]
+  onCompleted?: () => void
 }
 
-export function SettlUpModal({ open, onClose, targets }: SettlUpModalProps) {
+export function SettlUpModal({ open, onClose, groupId, targets, onCompleted }: SettlUpModalProps) {
   const [selected, setSelected] = React.useState(0)
+  const [submitting, setSubmitting] = React.useState(false)
 
   React.useEffect(() => {
-    if (open) setSelected(0)
+    if (open) {
+      setSelected(0)
+      setSubmitting(false)
+    }
   }, [open])
 
   const showPicker = targets.length > 1
   const active = targets[selected]
   const empty = targets.length === 0
+
+  const submit = async () => {
+    if (!active || submitting) return
+    setSubmitting(true)
+    try {
+      const res = await fetch("/api/settlements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          groupId: groupId ?? null,
+          payeeId: active.id,
+          amount: active.amount,
+          note: null,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.success) {
+        onCompleted?.()
+        onClose()
+      } else {
+        window.alert(data.message ?? "Couldn't complete the settlement. Please try again.")
+      }
+    } catch {
+      window.alert("Couldn't complete the settlement. Please try again.")
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <Modal open={open} onClose={onClose} title="Settl Up">
@@ -51,7 +86,7 @@ export function SettlUpModal({ open, onClose, targets }: SettlUpModalProps) {
               <div className="space-y-2">
                 {targets.map((t, i) => (
                   <button
-                    key={t.name}
+                    key={t.id}
                     type="button"
                     onClick={() => setSelected(i)}
                     className={cn(
@@ -85,8 +120,17 @@ export function SettlUpModal({ open, onClose, targets }: SettlUpModalProps) {
             <p className="mt-1 text-3xl font-black text-foreground">€{active?.amount.toFixed(2)}</p>
           </div>
 
-          <Button className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90">
-            <HandCoins className="size-4" /> Settl Up
+          <Button
+            onClick={submit}
+            disabled={submitting}
+            className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            {submitting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <HandCoins className="size-4" />
+            )}
+            {submitting ? "Settling..." : "Settl Up"}
           </Button>
         </div>
       )}
