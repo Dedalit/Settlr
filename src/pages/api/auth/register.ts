@@ -7,12 +7,11 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const formData = await request.formData();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
-  const firstName = formData.get("firstName")?.toString();
-  const lastName = formData.get("lastName")?.toString();
+  const fullName = formData.get("fullName")?.toString().trim();
   const phone = formData.get("phone")?.toString();
   const username = formData.get("username")?.toString();
 
-  if (!email || !password || !firstName || !lastName) {
+  if (!email || !password || !fullName) {
     return new Response(JSON.stringify({ success: false, message: "Tutti i campi obbligatori devono essere compilati." }), {
       status: 400,
       headers: { "content-type": "application/json" },
@@ -26,8 +25,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     password,
     options: {
       data: {
-        first_name: firstName,
-        last_name: lastName,
+        full_name: fullName,
         username: username || "",
         phone: phone || "",
       },

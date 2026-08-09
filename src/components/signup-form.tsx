@@ -81,28 +81,16 @@ export function SignUpForm({
             {/* Griglia principale a 2 colonne con un piccolo spazio di sicurezza ai lati */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
 
-              {/* Nome */}
-              <Field>
-                <FieldLabel htmlFor="firstName" className="text-purple-100 text-xs">First Name</FieldLabel>
+              {/* Nome completo */}
+              <Field className="sm:col-span-2">
+                <FieldLabel htmlFor="fullName" className="text-purple-100 text-xs">Full Name</FieldLabel>
                 <Input
-                  id="firstName"
-                  name="firstName"
+                  id="fullName"
+                  name="fullName"
                   type="text"
-                  placeholder="Mario"
+                  placeholder="Mario Rossi"
                   required
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-purple-400 h-9 text-sm w-full"
-                />
-              </Field>
-
-              {/* Cognome */}
-              <Field>
-                <FieldLabel htmlFor="lastName" className="text-purple-100 text-xs">Last Name</FieldLabel>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  placeholder="Rossi"
-                  required
+                  autoComplete="name"
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-purple-400 h-9 text-sm w-full"
                 />
               </Field>
