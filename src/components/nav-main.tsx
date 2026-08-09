@@ -23,6 +23,7 @@ export interface NavLink {
   url: string
   icon?: React.ReactNode
   isActive?: boolean
+  badge?: number
   items?: NavSubItem[]
 }
 
@@ -40,6 +41,11 @@ export function NavMain({ links }: { links: NavLink[] }) {
               {link.icon}
               <span>{link.title}</span>
             </SidebarMenuButton>
+            {link.badge != null && link.badge > 0 && (
+              <span className="pointer-events-none absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold leading-none text-primary-foreground ring-2 ring-sidebar">
+                {link.badge > 99 ? "99+" : link.badge}
+              </span>
+            )}
             {link.items && (
               <SidebarMenuSub>
                 {link.items.map((subItem) => (

@@ -4,9 +4,19 @@ import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, Pencil, DollarSign, UserPlus, UserMinus, Tag, LoaderCircle, AlertCircle, RefreshCw } from "lucide-react"
+import { Users, Pencil, DollarSign, UserPlus, UserMinus, UserCheck, Tag, FolderOpen, LoaderCircle, AlertCircle, RefreshCw } from "lucide-react"
 
-type ActivityType = "expense_added" | "settlement" | "member_joined" | "member_removed" | "group_created" | "group_renamed"
+type ActivityType =
+  | "expense_added"
+  | "settlement"
+  | "member_joined"
+  | "member_removed"
+  | "group_created"
+  | "group_renamed"
+  | "friend_request"
+  | "friend_request_accepted"
+  | "group_invite"
+  | "group_invite_accepted"
 
 interface ActivityItemData {
   id: string
@@ -29,13 +39,21 @@ const typeConfig: Record<ActivityType, { icon: React.ReactNode; badge: string }>
   member_removed: { icon: <UserMinus className="size-4 text-red-400" />, badge: "bg-red-500/20 border-red-500/30" },
   group_created: { icon: <Users className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
   group_renamed: { icon: <Pencil className="size-4 text-blue-400" />, badge: "bg-blue-500/20 border-blue-500/30" },
+  friend_request: { icon: <UserPlus className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  friend_request_accepted: { icon: <UserCheck className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  group_invite: { icon: <FolderOpen className="size-4 text-blue-400" />, badge: "bg-blue-500/20 border-blue-500/30" },
+  group_invite_accepted: { icon: <UserCheck className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
 }
 
 const filters = [
   { key: "all", label: "All", types: null as ActivityType[] | null },
   { key: "settlements", label: "Settlements", types: ["settlement"] as ActivityType[] },
   { key: "expenses", label: "Expenses", types: ["expense_added"] as ActivityType[] },
-  { key: "groups", label: "Group Changes", types: ["group_created", "group_renamed"] as ActivityType[] },
+  {
+    key: "notifications",
+    label: "Notifications",
+    types: ["friend_request", "friend_request_accepted", "group_invite", "group_invite_accepted"] as ActivityType[],
+  },
   { key: "members", label: "Members", types: ["member_joined", "member_removed"] as ActivityType[] },
 ]
 
@@ -85,6 +103,7 @@ export function Activity() {
 
   React.useEffect(() => {
     load()
+    fetch("/api/notifications", { method: "PATCH" }).catch(() => {})
   }, [load])
 
   const filter = filters.find((f) => f.key === activeFilter)

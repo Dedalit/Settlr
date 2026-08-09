@@ -6,8 +6,9 @@ import { InlineActions } from "@/components/inline-actions"
 import { CardActionsMenu } from "@/components/card-actions-menu"
 import { AddExpenseModal } from "@/components/modals/add-expense-modal"
 import { SettlUpModal } from "@/components/modals/settl-up-modal"
+import { InviteMemberModal } from "@/components/modals/invite-member-modal"
 import { createBrowserSupabaseClient } from "@/lib/supabase"
-import { Users, ArrowUpRight, ArrowDownRight, Receipt, Calendar, CheckCircle2, Clock, HandCoins, Pencil, ImageIcon } from "lucide-react"
+import { Users, ArrowUpRight, ArrowDownRight, Receipt, Calendar, CheckCircle2, Clock, HandCoins, Pencil, ImageIcon, UserPlus } from "lucide-react"
 
 interface GroupMember {
   id: number
@@ -90,6 +91,7 @@ export function GroupDetail({ id }: { id: string }) {
   const [meId, setMeId] = React.useState<number | null>(null)
   const [expenseOpen, setExpenseOpen] = React.useState(false)
   const [settlOpen, setSettlOpen] = React.useState(false)
+  const [inviteOpen, setInviteOpen] = React.useState(false)
 
   const load = React.useCallback(async () => {
     setLoading(true)
@@ -190,6 +192,11 @@ export function GroupDetail({ id }: { id: string }) {
       label: "Add expense",
       icon: <Receipt className="size-4" />,
       onClick: () => setExpenseOpen(true),
+    },
+    {
+      label: "Invite",
+      icon: <UserPlus className="size-4" />,
+      onClick: () => setInviteOpen(true),
     },
     {
       label: "Settl Up",
@@ -410,6 +417,12 @@ export function GroupDetail({ id }: { id: string }) {
             }}
             groupId={group.id}
             targets={settlTargets}
+          />
+          <InviteMemberModal
+            open={inviteOpen}
+            onClose={() => setInviteOpen(false)}
+            groupId={group.id}
+            members={expenseMembers}
           />
         </>
       )}

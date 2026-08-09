@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
-import { getCurrentUserId } from "@/lib/database";
+import { getCurrentUserId, getUsersByIds } from "@/lib/database";
 
 export const GET: APIRoute = async ({ request, cookies }) => {
   const supabase = createClient({ request, cookies });
@@ -72,5 +72,59 @@ export const GET: APIRoute = async ({ request, cookies }) => {
     };
   });
 
-  return new Response(JSON.stringify({ activities }));
+  // Merge in the current user's notifications (friend requests, group invites, ...)
+  const { data: notifRows } = await supabase
+    .from("notifications")
+    .select("*")
+    .eq("user_id", me)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  let notificationItems: any[] = [];
+  if (notifRows && notifRows.length > 0) {
+    const actorIds = [...new Set(notifRows.map((n) => n.actor_id))];
+    const users = await getUsersByIds(supabase, actorIds);
+
+    notificationItems = notifRows.map((n) => {
+      const actor = users.get(n.actor_id)?.name ?? "User";
+      const p = n.payload ?? {};
+      let action = "";
+      let group: string | null = null;
+
+      switch (n.type) {
+        case "friend_request":
+          action = "sent you a friend request";
+          break;
+        case "friend_request_accepted":
+          action = "accepted your friend request";
+          break;
+        case "group_invite":
+          action = `invited you to join ${p.group_name ?? "a group"}`;
+          group = p.group_name ?? null;
+          break;
+        case "group_invite_accepted":
+          action = `accepted your invite to join ${p.group_name ?? "a group"}`;
+          group = p.group_name ?? null;
+          break;
+        default:
+          action = n.type;
+      }
+
+      return {
+        id: `n-${n.id}`,
+        type: n.type,
+        group,
+        actor,
+        action,
+        amount: null,
+        time: n.created_at,
+      };
+    });
+  }
+
+  const all = [...activities, ...notificationItems].sort(
+    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+  );
+
+  return new Response(JSON.stringify({ activities: all }));
 };

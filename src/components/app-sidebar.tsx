@@ -21,7 +21,6 @@ const staticLinks: NavLink[] = [
   { title: "Recent Activity", url: "/dashboard/activity", icon: <ActivityIcon /> },
   { title: "Settls", url: "/dashboard/settls", icon: <ReceiptIcon /> },
 ]
-
 function getActiveState(pathname: string, navLinks: NavLink[]) {
   return navLinks.map((link) => {
     const itemsWithActive = link.items?.map((item) => ({
@@ -42,6 +41,9 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
   const [pinnedFriendIds, setPinnedFriendIds] = React.useState<string[]>([])
   const [pinnedGroupIds, setPinnedGroupIds] = React.useState<string[]>([])
   const [pinModal, setPinModal] = React.useState<null | "friends" | "groups">(null)
+  const [friendRequestCount, setFriendRequestCount] = React.useState(0)
+  const [groupInviteCount, setGroupInviteCount] = React.useState(0)
+  const [notifCount, setNotifCount] = React.useState(0)
 
   React.useEffect(() => {
     let mounted = true
@@ -65,6 +67,25 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
         setGroups(loadedGroups)
         setPinnedFriendIds(loadedFriends.slice(0, 4).map((f) => f.id))
         setPinnedGroupIds(loadedGroups.slice(0, 3).map((g) => g.id))
+      })
+      .catch(() => {})
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  React.useEffect(() => {
+    let mounted = true
+    Promise.all([
+      fetch("/api/friends").then((r) => r.json()),
+      fetch("/api/groups/invites").then((r) => r.json()),
+      fetch("/api/notifications").then((r) => r.json()),
+    ])
+      .then(([friendsData, invitesData, notifData]) => {
+        if (!mounted) return
+        setFriendRequestCount(friendsData.requests?.length ?? 0)
+        setGroupInviteCount(invitesData.invites?.length ?? 0)
+        setNotifCount(notifData.unread ?? 0)
       })
       .catch(() => {})
     return () => {
@@ -97,17 +118,21 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
   ]
 
   const navLinks: NavLink[] = [
-    ...staticLinks,
+    ...staticLinks.map((link) =>
+      link.title === "Recent Activity" ? { ...link, badge: notifCount } : link
+    ),
     {
       title: "Friends",
       url: "/dashboard/friends",
       icon: <UsersIcon />,
+      badge: friendRequestCount,
       items: friendSubItems,
     },
     {
       title: "Groups",
       url: "/dashboard/groups",
       icon: <FolderOpenIcon />,
+      badge: groupInviteCount,
       items: groupSubItems,
     },
   ]

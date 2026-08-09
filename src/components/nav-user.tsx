@@ -34,7 +34,6 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
-    if (initialUser) return // already have server user
     let mounted = true
     const supabase = createBrowserSupabaseClient()
 
@@ -44,10 +43,24 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
       const clientUser = sessionResp.data?.session?.user ?? (await supabase.auth.getUser()).data?.user
       if (!mounted) return
       if (!clientUser) {
-        setUserData({ name: 'User', email: '', avatar: '/avatars/shadcn.jpg' })
+        setUserData(initialUser || { name: 'User', email: '', avatar: '/avatars/shadcn.jpg' })
         setLoading(false)
         return
       }
+
+      // Fetch authoritative full name + avatar from the DB
+      let dbName: string | null = null
+      let dbAvatar: string | null = null
+      const { data: dbRow } = await supabase
+        .from('users')
+        .select('full_name, avatar_url')
+        .eq('auth_id', clientUser.id)
+        .single()
+      if (dbRow) {
+        dbName = dbRow.full_name || null
+        dbAvatar = dbRow.avatar_url || null
+      }
+      if (!mounted) return
 
       const username = clientUser.user_metadata?.username
       const firstName = clientUser.user_metadata?.first_name || ''
@@ -57,16 +70,22 @@ export function NavUser({ user: initialUser }: { user?: { name: string; email: s
       const usernameFromEmail = email.split('@')[0]
 
       const displayName =
+        dbName ||
         username ||
         (fullName ? fullName : null) ||
         clientUser.user_metadata?.full_name ||
         clientUser.user_metadata?.name ||
+        initialUser?.name ||
         (usernameFromEmail ? usernameFromEmail.charAt(0).toUpperCase() + usernameFromEmail.slice(1) : 'User')
 
       const data = {
         name: displayName,
         email,
-        avatar: clientUser.user_metadata?.avatar_url || '/avatars/shadcn.jpg',
+        avatar:
+          dbAvatar ||
+          clientUser.user_metadata?.avatar_url ||
+          initialUser?.avatar ||
+          '/avatars/shadcn.jpg',
       }
 
       setUserData(data)

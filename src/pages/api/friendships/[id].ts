@@ -44,6 +44,12 @@ export const PATCH: APIRoute = async ({ params, request, cookies }) => {
   if (body?.action === "accept") {
     const { error } = await supabase.from("friendships").update({ status: "accepted" }).eq("id", friendship.id);
     if (error) return new Response(JSON.stringify({ success: false, message: error.message }), { status: 500 });
+    await supabase.rpc("create_notification", {
+      recipient_id: friendship.user_id_1,
+      actor_id: me,
+      notif_type: "friend_request_accepted",
+      notif_payload: {},
+    });
     return new Response(JSON.stringify({ success: true }));
   }
 

@@ -46,5 +46,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     return new Response(JSON.stringify({ success: false, message: error?.message || "Could not send the request" }), { status: 500 });
   }
 
+  await supabase.rpc("create_notification", {
+    recipient_id: target,
+    actor_id: me,
+    notif_type: "friend_request",
+    notif_payload: {},
+  });
+
   return new Response(JSON.stringify({ success: true, friendshipId: friendship.id }));
 };

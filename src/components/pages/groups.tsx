@@ -5,8 +5,9 @@ import { PageHeader } from "@/components/dashboard-layout"
 import { InlineActions } from "@/components/inline-actions"
 import { CardActionsMenu } from "@/components/card-actions-menu"
 import { CreateGroupModal } from "@/components/modals/create-group-modal"
-import { Card, CardContent } from "@/components/ui/card"
-import { Users, ArrowUpRight, ArrowDownRight, Receipt, Plus, LogOut } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Users, ArrowUpRight, ArrowDownRight, Receipt, Plus, LogOut, Check, FolderOpen, Loader2 } from "lucide-react"
 
 interface GroupSummary {
   id: number
@@ -18,6 +19,15 @@ interface GroupSummary {
   totalSettls: number
   totalSpent: number
   lastActive: string | null
+}
+
+interface GroupInvite {
+  id: number
+  group_id: number
+  group_name: string
+  inviter_id: number
+  inviter_name: string
+  created_at: string
 }
 
 function timeAgo(iso: string | null): string {
@@ -41,6 +51,8 @@ function timeAgo(iso: string | null): string {
 export function Groups() {
   const [createOpen, setCreateOpen] = React.useState(false)
   const [groupsList, setGroupsList] = React.useState<GroupSummary[]>([])
+  const [invites, setInvites] = React.useState<GroupInvite[]>([])
+  const [busyInviteId, setBusyInviteId] = React.useState<number | null>(null)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -59,9 +71,43 @@ export function Groups() {
     }
   }, [])
 
+  const loadInvites = React.useCallback(async () => {
+    try {
+      const res = await fetch("/api/groups/invites")
+      if (!res.ok) return
+      const data = await res.json()
+      setInvites(data.invites ?? [])
+    } catch {
+      setInvites([])
+    }
+  }, [])
+
   React.useEffect(() => {
     loadGroups()
-  }, [loadGroups])
+    loadInvites()
+  }, [loadGroups, loadInvites])
+
+  const handleInviteResponse = async (invite: GroupInvite, action: "accept" | "decline") => {
+    setBusyInviteId(invite.id)
+    try {
+      const res = await fetch(`/api/groups/invites/${invite.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.success) {
+        setInvites((prev) => prev.filter((i) => i.id !== invite.id))
+        if (action === "accept") await loadGroups()
+      } else {
+        window.alert(data.message || "Couldn't process the invite. Please try again.")
+      }
+    } catch {
+      window.alert("Couldn't process the invite. Please try again.")
+    } finally {
+      setBusyInviteId(null)
+    }
+  }
 
   const handleLeave = async (group: GroupSummary) => {
     try {
@@ -114,6 +160,49 @@ export function Groups() {
             Retry
           </button>
         </div>
+      )}
+
+      {!loading && !error && invites.length > 0 && (
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+          <CardHeader>
+            <CardTitle className="text-foreground text-sm font-medium">Group invites</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs">People who want to add you to a group</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {invites.map((invite) => (
+                <div key={invite.id} className="flex items-center gap-3 rounded-2xl border-border bg-secondary p-3">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-blue-500/20">
+                    <FolderOpen className="size-5 text-blue-400" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-foreground">{invite.group_name}</p>
+                    <p className="truncate text-xs text-muted-foreground">Invited by {invite.inviter_name}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleInviteResponse(invite, "accept")}
+                      disabled={busyInviteId === invite.id}
+                      className="flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
+                    >
+                      {busyInviteId === invite.id ? <Loader2 className="size-3.5 animate-spin" /> : <Check className="size-3.5" />}
+                      Accept
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInviteResponse(invite, "decline")}
+                      disabled={busyInviteId === invite.id}
+                      className="rounded-full border border-border bg-secondary px-3.5 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50"
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {!loading && !error && (
