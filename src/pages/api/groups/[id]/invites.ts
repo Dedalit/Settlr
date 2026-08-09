@@ -71,6 +71,16 @@ export const POST: APIRoute = async ({ params, request, cookies }) => {
     return new Response(JSON.stringify({ success: false, message: "User not found" }), { status: 404 });
   }
 
+  const { data: friendship } = await supabase
+    .from("friendships")
+    .select("id")
+    .or(`and(user_id_1.eq.${me},user_id_2.eq.${inviteeId}),and(user_id_1.eq.${inviteeId},user_id_2.eq.${me})`)
+    .eq("status", "accepted")
+    .maybeSingle();
+  if (!friendship) {
+    return new Response(JSON.stringify({ success: false, message: "You can only invite your friends" }), { status: 400 });
+  }
+
   const { data: existingMember } = await supabase
     .from("group_members")
     .select("id")

@@ -31,6 +31,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       users[u.id] = {
         id: u.id,
         name: u.full_name || u.username || (u.email ? u.email.split("@")[0] : "User"),
+        username: u.username,
         avatar: u.avatar_url,
         email: u.email,
       };
@@ -100,7 +101,14 @@ export const GET: APIRoute = async ({ request, cookies }) => {
 
   const requests = pendingIncoming.map((f) => {
     const u = users[f.user_id_1];
-    return { friendship_id: f.id, id: f.user_id_1, name: u?.name ?? "User", avatar: u?.avatar ?? null, email: u?.email ?? null };
+    return {
+      friendship_id: f.id,
+      id: f.user_id_1,
+      name: u?.name ?? "User",
+      username: u?.username ?? null,
+      avatar: u?.avatar ?? null,
+      email: u?.email ?? null,
+    };
   });
 
   return new Response(JSON.stringify({ friends, requests }));

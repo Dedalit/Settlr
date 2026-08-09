@@ -38,6 +38,7 @@ export const GET: APIRoute = async ({ params, request, cookies }) => {
     id: friendRow.id,
     name: friendRow.full_name || friendRow.username || (friendRow.email ? friendRow.email.split("@")[0] : "User"),
     avatar: friendRow.avatar_url,
+    username: friendRow.username,
     email: friendRow.email,
     balance: 0,
   };

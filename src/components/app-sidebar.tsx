@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ActivityIcon, ReceiptIcon, UsersIcon, FolderOpenIcon } from "lucide-react"
+import { LayoutDashboardIcon, ActivityIcon, ReceiptIcon, UsersIcon, FolderOpenIcon, Pin } from "lucide-react"
 
 const staticLinks: NavLink[] = [
   { title: "Dashboard", url: "/dashboard", icon: <LayoutDashboardIcon /> },
@@ -38,8 +38,22 @@ function getActiveState(pathname: string, navLinks: NavLink[]) {
 export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<typeof Sidebar> & { pathname: string; user?: { name: string; email: string; avatar: string } }) {
   const [friends, setFriends] = React.useState<PinMoreItem[]>([])
   const [groups, setGroups] = React.useState<PinMoreItem[]>([])
-  const [pinnedFriendIds, setPinnedFriendIds] = React.useState<string[]>([])
-  const [pinnedGroupIds, setPinnedGroupIds] = React.useState<string[]>([])
+  const [pinnedFriendIds, setPinnedFriendIds] = React.useState<string[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      return JSON.parse(window.localStorage.getItem("settlr_pinned_friends") ?? "[]")
+    } catch {
+      return []
+    }
+  })
+  const [pinnedGroupIds, setPinnedGroupIds] = React.useState<string[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      return JSON.parse(window.localStorage.getItem("settlr_pinned_groups") ?? "[]")
+    } catch {
+      return []
+    }
+  })
   const [pinModal, setPinModal] = React.useState<null | "friends" | "groups">(null)
   const [friendRequestCount, setFriendRequestCount] = React.useState(0)
   const [groupInviteCount, setGroupInviteCount] = React.useState(0)
@@ -65,8 +79,6 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
         }))
         setFriends(loadedFriends)
         setGroups(loadedGroups)
-        setPinnedFriendIds(loadedFriends.slice(0, 4).map((f) => f.id))
-        setPinnedGroupIds(loadedGroups.slice(0, 3).map((g) => g.id))
       })
       .catch(() => {})
     return () => {
@@ -102,6 +114,7 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
       title: pinnedFriendIds.length === 0 ? "Pin friends" : "Edit pins",
       onClick: () => setPinModal("friends"),
       className: "text-sidebar-foreground/50",
+      icon: <Pin />,
     },
   ]
 
@@ -114,6 +127,7 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
       title: pinnedGroupIds.length === 0 ? "Pin groups" : "Edit pins",
       onClick: () => setPinModal("groups"),
       className: "text-sidebar-foreground/50",
+      icon: <Pin />,
     },
   ]
 
@@ -144,15 +158,23 @@ export function AppSidebar({ pathname, user, ...props }: React.ComponentProps<ty
   const togglePin = (id: string) => {
     if (pinModal === "friends") {
       setPinnedFriendIds((prev) => {
-        if (prev.includes(id)) return prev.filter((x) => x !== id)
-        if (prev.length >= MAX_PINS) return prev
-        return [...prev, id]
+        const next = prev.includes(id) ? prev.filter((x) => x !== id) : prev.length >= MAX_PINS ? prev : [...prev, id]
+        try {
+          window.localStorage.setItem("settlr_pinned_friends", JSON.stringify(next))
+        } catch {
+          // ignore
+        }
+        return next
       })
     } else if (pinModal === "groups") {
       setPinnedGroupIds((prev) => {
-        if (prev.includes(id)) return prev.filter((x) => x !== id)
-        if (prev.length >= MAX_PINS) return prev
-        return [...prev, id]
+        const next = prev.includes(id) ? prev.filter((x) => x !== id) : prev.length >= MAX_PINS ? prev : [...prev, id]
+        try {
+          window.localStorage.setItem("settlr_pinned_groups", JSON.stringify(next))
+        } catch {
+          // ignore
+        }
+        return next
       })
     }
   }

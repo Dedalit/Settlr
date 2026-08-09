@@ -6,13 +6,14 @@ import { InlineActions } from "@/components/inline-actions"
 import { AddExpenseModal } from "@/components/modals/add-expense-modal"
 import { SettlUpModal } from "@/components/modals/settl-up-modal"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ArrowUpRight, ArrowDownRight, Mail, Receipt, HandCoins, Hand, CheckCircle2, Loader2 } from "lucide-react"
+import { ArrowUpRight, ArrowDownRight, Receipt, HandCoins, Hand, CheckCircle2, Loader2 } from "lucide-react"
 
 interface FriendData {
   id: number
   name: string
   avatar: string
   email: string
+  username?: string
   balance: number
 }
 
@@ -167,9 +168,8 @@ export function FriendDetail({ id }: { id: string }) {
             <div className="min-w-0 flex-1">
               <h1 className="truncate text-2xl font-black text-foreground uppercase">{friend.name}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-2">
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Mail className="size-3.5" />
-                  {friend.email}
+                <span className="text-xs text-muted-foreground">
+                  {friend.username ? `@${friend.username}` : friend.email}
                 </span>
               </div>
             </div>

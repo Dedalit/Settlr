@@ -23,6 +23,7 @@ interface FriendRequest {
   friendship_id: string
   id: string
   name: string
+  username?: string
   avatar: string
   email?: string
 }
@@ -185,7 +186,7 @@ export function Friends() {
                       </Avatar>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-foreground">{req.name}</p>
-                        {req.email && <p className="truncate text-xs text-muted-foreground">{req.email}</p>}
+                        {req.username && <p className="truncate text-xs text-muted-foreground">@{req.username}</p>}
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
                         <button

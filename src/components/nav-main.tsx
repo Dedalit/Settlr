@@ -16,6 +16,7 @@ export interface NavSubItem {
   onClick?: () => void
   isActive?: boolean
   className?: string
+  icon?: React.ReactNode
 }
 
 export interface NavLink {
@@ -61,6 +62,7 @@ export function NavMain({ links }: { links: NavLink[] }) {
                       isActive={subItem.isActive}
                       className={subItem.className}
                     >
+                      {subItem.icon}
                       <span>{subItem.title}</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
