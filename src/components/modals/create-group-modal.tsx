@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Segmented } from "@/components/modals/segmented"
 import { ImageIcon, Plus } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 type GroupType = "trip" | "roommates" | "event" | "other"
 
@@ -17,14 +18,49 @@ const groupTypeOptions: { label: string; value: GroupType }[] = [
   { label: "Other", value: "other" },
 ]
 
-export function CreateGroupModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function CreateGroupModal({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated?: () => void }) {
   const [title, setTitle] = React.useState("")
   const [picture, setPicture] = React.useState("")
   const [type, setType] = React.useState<GroupType>("trip")
+  const [submitting, setSubmitting] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    if (!open) return
+    setTitle("")
+    setPicture("")
+    setType("trip")
+    setSubmitting(false)
+    setError(null)
+  }, [open])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!title.trim() || submitting) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/groups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: title.trim(), imageUrl: picture.trim() || null, type }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Could not create the group.")
+      }
+      onCreated?.()
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create the group.")
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <Modal open={open} onClose={onClose} title="Create group">
-      <div className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <Field>
           <FieldLabel className="text-foreground">Group title</FieldLabel>
           <Input
@@ -63,10 +99,16 @@ export function CreateGroupModal({ open, onClose }: { open: boolean; onClose: ()
           <Segmented<GroupType> options={groupTypeOptions} value={type} onChange={setType} />
         </Field>
 
-        <Button className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90">
-          <Plus className="size-4" /> Create group
+        {error && <p className="text-xs text-red-400">{error}</p>}
+
+        <Button
+          type="submit"
+          disabled={!title.trim() || submitting}
+          className="h-12 w-full rounded-full bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        >
+          <Plus className={cn("size-4", submitting && "animate-spin")} /> {submitting ? "Creating..." : "Create group"}
         </Button>
-      </div>
+      </form>
     </Modal>
   )
 }

@@ -1,170 +1,175 @@
 "use client"
 
+import * as React from "react"
 import { PageHeader } from "@/components/dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, Pencil, DollarSign, ArrowRightLeft, UserPlus, UserMinus, Tag, RefreshCw } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Users, Pencil, DollarSign, UserPlus, UserMinus, UserCheck, Tag, FolderOpen, LoaderCircle, AlertCircle, RefreshCw } from "lucide-react"
 
-const activities = [
+type ActivityType =
+  | "expense_added"
+  | "settlement"
+  | "member_joined"
+  | "member_removed"
+  | "group_created"
+  | "group_renamed"
+  | "friend_request"
+  | "friend_request_accepted"
+  | "group_invite"
+  | "group_invite_accepted"
+
+interface ActivityItemData {
+  id: string
+  type: ActivityType
+  group: string
+  actor: string
+  action: string
+  amount?: number | string
+  time: string
+}
+
+interface ActivityData {
+  activities: ActivityItemData[]
+}
+
+const typeConfig: Record<ActivityType, { icon: React.ReactNode; badge: string }> = {
+  expense_added: { icon: <Tag className="size-4 text-muted-foreground" />, badge: "bg-secondary border-border" },
+  settlement: { icon: <DollarSign className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  member_joined: { icon: <UserPlus className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  member_removed: { icon: <UserMinus className="size-4 text-red-400" />, badge: "bg-red-500/20 border-red-500/30" },
+  group_created: { icon: <Users className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  group_renamed: { icon: <Pencil className="size-4 text-blue-400" />, badge: "bg-blue-500/20 border-blue-500/30" },
+  friend_request: { icon: <UserPlus className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  friend_request_accepted: { icon: <UserCheck className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+  group_invite: { icon: <FolderOpen className="size-4 text-blue-400" />, badge: "bg-blue-500/20 border-blue-500/30" },
+  group_invite_accepted: { icon: <UserCheck className="size-4 text-emerald-400" />, badge: "bg-emerald-500/20 border-emerald-500/30" },
+}
+
+const filters = [
+  { key: "all", label: "All", types: null as ActivityType[] | null },
+  { key: "settlements", label: "Settlements", types: ["settlement"] as ActivityType[] },
+  { key: "expenses", label: "Expenses", types: ["expense_added"] as ActivityType[] },
   {
-    id: 1,
-    type: "settlement",
-    group: "Vacanza a Cecina",
-    actor: "Nasty",
-    action: "settled up with Pippo",
-    amount: "€24.50",
-    time: "2 hours ago",
-    icon: <DollarSign className="size-4 text-emerald-400" />,
+    key: "notifications",
+    label: "Notifications",
+    types: ["friend_request", "friend_request_accepted", "group_invite", "group_invite_accepted"] as ActivityType[],
   },
-  {
-    id: 2,
-    type: "expense",
-    group: "I Tre Topolini",
-    actor: "Grecia <3",
-    action: "added expense: Drinks at Bar — €32.00 (split 4 ways)",
-    amount: "€8.00 your share",
-    time: "5 hours ago",
-    icon: <Tag className="size-4 text-muted-foreground" />,
-  },
-  {
-    id: 3,
-    type: "rename",
-    group: "The Weeknd 27/7",
-    actor: "Pippo",
-    action: "renamed group from \"Concert Tickets\" to \"The Weeknd 27/7\"",
-    amount: "",
-    time: "1 day ago",
-    icon: <Pencil className="size-4 text-blue-400" />,
-  },
-  {
-    id: 4,
-    type: "member",
-    group: "Vacanza a Cecina",
-    actor: "GiovAnge",
-    action: "joined the group",
-    amount: "",
-    time: "2 days ago",
-    icon: <UserPlus className="size-4 text-emerald-400" />,
-  },
-  {
-    id: 5,
-    type: "settlement",
-    group: "I Tre Topolini",
-    actor: "You",
-    action: "paid Nasty",
-    amount: "€15.00",
-    time: "2 days ago",
-    icon: <ArrowRightLeft className="size-4 text-amber-400" />,
-  },
-  {
-    id: 6,
-    type: "expense",
-    group: "The Weeknd 27/7",
-    actor: "Nasty",
-    action: "added expense: Tickets — €180.00 (split 3 ways)",
-    amount: "€60.00 your share",
-    time: "3 days ago",
-    icon: <Tag className="size-4 text-muted-foreground" />,
-  },
-  {
-    id: 7,
-    type: "member",
-    group: "I Tre Topolini",
-    actor: "Pippo",
-    action: "removed Marco from the group",
-    amount: "",
-    time: "4 days ago",
-    icon: <UserMinus className="size-4 text-red-400" />,
-  },
-  {
-    id: 8,
-    type: "settlement",
-    group: "Vacanza a Cecina",
-    actor: "Grecia <3",
-    action: "settled up with You",
-    amount: "€42.00",
-    time: "5 days ago",
-    icon: <RefreshCw className="size-4 text-emerald-400" />,
-  },
-  {
-    id: 9,
-    type: "expense",
-    group: "I Tre Topolini",
-    actor: "GiovAnge",
-    action: "added expense: Grocery run — €45.80 (split 4 ways)",
-    amount: "€11.45 your share",
-    time: "1 week ago",
-    icon: <Tag className="size-4 text-muted-foreground" />,
-  },
-  {
-    id: 10,
-    type: "settlement",
-    group: "The Weeknd 27/7",
-    actor: "Pippo",
-    action: "settled up with Grecia <3",
-    amount: "€30.00",
-    time: "1 week ago",
-    icon: <DollarSign className="size-4 text-emerald-400" />,
-  },
+  { key: "members", label: "Members", types: ["member_joined", "member_removed"] as ActivityType[] },
 ]
 
-function ActivityIcon({ type }: { type: string }) {
-  const bgMap: Record<string, string> = {
-    settlement: "bg-emerald-500/20 border-emerald-500/30",
-    expense: "bg-secondary border-border",
-    rename: "bg-blue-500/20 border-blue-500/30",
-    member: "bg-amber-500/20 border-amber-500/30",
-  }
-  return bgMap[type] || "bg-secondary border-border"
+function fmt(amount: number) {
+  return `€${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
+function timeAgo(iso: string) {
+  const then = new Date(iso)
+  if (Number.isNaN(then.getTime())) return iso
+  const seconds = Math.round((Date.now() - then.getTime()) / 1000)
+  if (seconds < 60) return "just now"
+  const minutes = Math.round(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.round(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  const days = Math.round(hours / 24)
+  if (days < 7) return `${days}d ago`
+  return then.toLocaleDateString()
+}
+
+function amountText(amount: number | string | undefined) {
+  if (amount === undefined || amount === null) return ""
+  return typeof amount === "number" ? fmt(amount) : amount
 }
 
 export function Activity() {
+  const [data, setData] = React.useState<ActivityData | null>(null)
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
+  const [activeFilter, setActiveFilter] = React.useState("all")
+
+  const load = React.useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/activity")
+      if (!res.ok) throw new Error("Failed to load activity")
+      const json = (await res.json()) as ActivityData
+      setData(json)
+    } catch {
+      setError("Couldn't load your activity. Check your connection and try again.")
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    load()
+    fetch("/api/notifications", { method: "PATCH" }).catch(() => {})
+  }, [load])
+
+  const filter = filters.find((f) => f.key === activeFilter)
+  const filtered = data?.activities.filter((a) => !filter?.types || filter.types.includes(a.type)) ?? []
+
   return (
     <>
       <PageHeader title="Recent Activity" subtitle="Everything happening in your groups" />
 
       <div className="mt-2 flex flex-wrap items-center gap-2 md:gap-4">
-        <FilterChip label="All" active />
-        <FilterChip label="Settlements" />
-        <FilterChip label="Expenses" />
-        <FilterChip label="Group Changes" />
-        <FilterChip label="Members" />
-      </div>
-
-      <div className="space-y-3">
-        {activities.map((item) => (
-          <Card key={item.id} className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl hover:bg-accent/50 transition-colors">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-4">
-                <div className={`size-10 rounded-xl flex items-center justify-center border ${ActivityIcon({ type: item.type })}`}>
-                  {item.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-sm text-foreground">
-                        <span className="font-semibold">{item.actor}</span>{" "}
-                        <span className="text-muted-foreground">{item.action}</span>
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.group}</p>
-                    </div>
-                    {item.amount && (
-                      <span className="text-sm font-semibold text-foreground whitespace-nowrap">{item.amount}</span>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">{item.time}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {filters.map((f) => (
+          <FilterChip key={f.key} label={f.label} active={activeFilter === f.key} onClick={() => setActiveFilter(f.key)} />
         ))}
       </div>
+
+      {loading ? (
+        <LoadingCard />
+      ) : error ? (
+        <ErrorCard message={error} onRetry={load} />
+      ) : filtered.length === 0 ? (
+        <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl">
+          <CardContent>
+            <p className="py-8 text-center text-sm text-muted-foreground">No activity here yet.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((item) => {
+            const config = typeConfig[item.type] || typeConfig.expense_added
+            const amount = amountText(item.amount)
+            return (
+              <Card key={item.id} className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl hover:bg-accent/50 transition-colors">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    <div className={`size-10 rounded-xl flex items-center justify-center border ${config.badge}`}>{config.icon}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm text-foreground">
+                            <span className="font-semibold">{item.actor}</span>{" "}
+                            <span className="text-muted-foreground">{item.action}</span>
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{item.group}</p>
+                        </div>
+                        {amount && (
+                          <span className="text-sm font-semibold text-foreground whitespace-nowrap">{amount}</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">{timeAgo(item.time)}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      )}
     </>
   )
 }
 
-function FilterChip({ label, active }: { label: string; active?: boolean }) {
+function FilterChip({ label, active, onClick }: { label: string; active?: boolean; onClick?: () => void }) {
   return (
     <button
+      type="button"
+      onClick={onClick}
       className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
         active
           ? "bg-primary/10 text-primary border-primary/30"
@@ -173,5 +178,27 @@ function FilterChip({ label, active }: { label: string; active?: boolean }) {
     >
       {label}
     </button>
+  )
+}
+
+function LoadingCard() {
+  return (
+    <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl flex items-center justify-center gap-2 py-12">
+      <LoaderCircle className="size-5 animate-spin text-muted-foreground" />
+      <span className="text-sm text-muted-foreground">Loading…</span>
+    </Card>
+  )
+}
+
+function ErrorCard({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <Card className="bg-card/70 text-card-foreground border-border shadow-sm backdrop-blur-xl flex flex-col items-center justify-center gap-3 py-12">
+      <AlertCircle className="size-6 text-red-400" />
+      <p className="text-sm text-muted-foreground max-w-sm text-center">{message}</p>
+      <Button variant="outline" size="sm" onClick={onRetry}>
+        <RefreshCw className="size-4" />
+        Retry
+      </Button>
+    </Card>
   )
 }
