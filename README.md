@@ -57,7 +57,8 @@
 | **Framework** | Astro 7 (SSR, server output) |
 | **UI** | React 19 + Tailwind CSS v4 + shadcn/ui (Base UI) |
 | **Auth & DB** | Supabase (SSR, cookie-based sessions) |
-| **Runtime** | Node ≥ 22.12.0, pnpm |
+| **Hosting** | Cloudflare Workers (`@astrojs/cloudflare` adapter) |
+| **Runtime** | Node ≥ 22.12.0 (build only), Cloudflare `workerd` (deploy) — pnpm |
 
 ## ✦ Getting Started
 
@@ -72,9 +73,10 @@ Copy `.env.example` → `.env` and fill in your Supabase credentials.
 
 | Command | Description |
 |---|---|
-| `pnpm dev` | Start the dev server → http://localhost:4321 |
-| `pnpm build` | Production build (SSR standalone → `dist/`) |
-| `pnpm preview` | Preview the production build |
+| `pnpm dev` | Start the dev server (on Cloudflare `workerd`) → http://localhost:4321 |
+| `pnpm build` | Production build (Cloudflare Workers output → `dist/`) |
+| `pnpm preview` | Preview the production build on `workerd` |
+| `pnpm deploy` | Build + deploy to Cloudflare Workers (`wrangler deploy`) |
 | `pnpm astro` | Raw Astro CLI passthrough |
 
 ### Local Supabase
@@ -84,6 +86,30 @@ supabase start
 # Auth emails go to http://127.0.0.1:54324 (Inbucket)
 # Confirmations are disabled locally
 ```
+
+## ✦ Deploy to Cloudflare Workers
+
+**Hosting:** Cloudflare Workers (`@astrojs/cloudflare` adapter). Config lives in `wrangler.jsonc` (worker name `settlr`, static assets from `dist/`, `nodejs_compat` flag). Build/deploy requires Node ≥ 22 and `pnpm`.
+
+**Local deploy:**
+
+```bash
+pnpm install
+pnpm build
+pnpm dlx wrangler login    # once
+pnpm deploy                # astro build && wrangler deploy
+```
+
+Preview the production build locally first: `pnpm build && pnpm preview`.
+
+**CI/CD (Workers Builds):** In the Cloudflare dashboard go to `Compute > Workers & Pages` → `Create application` → `Import a repository`. Configure:
+
+- Build command: `npx astro build`
+- Deploy command: `npx wrangler deploy`
+
+The app will be available at `https://settlr.<your-account>.workers.dev`. To use a custom domain later, add it under the Worker's `Settings > Domains & Routes`.
+
+**Supabase redirects:** after deploying, add the production URL (e.g. `https://settlr.<account>.workers.dev`) to Supabase Auth → URL Configuration: `Site URL` and `Additional Redirect URLs` (used by the email confirmation flow at `/auth/callback`).
 
 ## ✦ Authors / Creators
 

@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 import react from '@astrojs/react';
-import node from "@astrojs/node";
+import cloudflare from "@astrojs/cloudflare";
 
 import tailwindcss from "@tailwindcss/vite";
 
@@ -11,8 +11,12 @@ export default defineConfig({
   integrations: [react()],
   output: "server",
 
-  adapter: node({
-    mode: "standalone",
+  // No sessions are used; prevents automatic KV provisioning on deploy.
+  session: false,
+
+  adapter: cloudflare({
+    // The app doesn't use Astro's image pipeline; avoid provisioning an Images binding.
+    imageService: 'passthrough',
   }),
 
   vite: {

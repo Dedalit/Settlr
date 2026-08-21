@@ -32,9 +32,10 @@
 - Always follow the UI design system when creating or reviewing components or pages. The design system is described in the "Appearance & theming" section below.
 
 ```bash
-pnpm dev       # astro dev (localhost:4321)
-pnpm build     # astro build (SSR standalone → dist/)
-pnpm preview   # astro preview (run production build)
+pnpm dev       # astro dev (localhost:4321, runs on Cloudflare workerd)
+pnpm build     # astro build (Cloudflare Workers output → dist/)
+pnpm preview   # astro preview (run production build on workerd)
+pnpm deploy    # astro build && wrangler deploy (push to Cloudflare Workers)
 pnpm astro     # raw astro CLI passthrough
 ```
 
@@ -42,7 +43,7 @@ No lint, typecheck, or test commands exist. `pnpm build` is the only verificatio
 
 ## Stack
 
-- **Astro 7** — `output: "server"`, Node adapter in `standalone` mode
+- **Astro 7** — `output: "server"`, `@astrojs/cloudflare` adapter (Workers runtime via `workerd`; `astro dev`/`preview` run on the real Workers runtime, not Node)
 - **React 19** — `.tsx` islands hydrated with `client:load`; `.astro` files are server-only
 - **Tailwind CSS v4** — via `@tailwindcss/vite` plugin (not PostCSS); gradients use v4 syntax `bg-linear-to-*` (NOT v3's `bg-gradient-to-*`)
 - **shadcn/ui** — built on **Base UI** (not Radix); components in `src/components/ui/`
@@ -63,6 +64,17 @@ No lint, typecheck, or test commands exist. `pnpm build` is the only verificatio
 
 Copy `.env.example` → `.env`. All env vars are Astro `PUBLIC_`-prefixed.
 NOTE: `.env` is **git-tracked** (it was committed before `.gitignore`'s `.env*` rule). Do not add secrets to it / don't assume it's ignored. `.env.local` does not exist.
+
+## Cloudflare deployment
+
+- **Target**: Cloudflare Workers (NOT Pages — the adapter dropped Pages support in v13). Worker name: `settlr` → `https://settlr.<account>.workers.dev`.
+- **Config**: `wrangler.jsonc` — `main` = `@astrojs/cloudflare/entrypoints/server`, assets served from `dist/` via the `ASSETS` binding with `not_found_handling: "404-page"`, `nodejs_compat` flag.
+- **Env vars**: the two `PUBLIC_*` Supabase keys live in `wrangler.jsonc` `vars` (they are public publishable keys) AND are inlined at build time from the git-tracked `.env`. Do NOT add real secrets to `wrangler.jsonc` — use `pnpm dlx wrangler secret put <NAME>` instead.
+- **Sessions**: `session: false` is set in `astro.config.ts` (no Astro Sessions usage) so no KV namespace is auto-provisioned.
+- **Image service**: `imageService: 'passthrough'` — the app doesn't use Astro's image pipeline, so no Images binding is provisioned.
+- **Local preview**: `pnpm build && pnpm preview` runs the production Worker on `workerd`. `pnpm dlx wrangler deploy --dry-run` validates the bundle without uploading.
+- **Workers Builds** (Cloudflare dashboard): build command `npx astro build`, deploy command `npx wrangler deploy`. No GitHub Actions needed.
+- Do NOT reintroduce `@astrojs/node` — the codebase must stay free of Node-only server APIs (`node:*`, `fs`, `process`, etc.).
 
 ## Routing & pages
 
@@ -100,7 +112,7 @@ The actual UI lives in React page components under `src/components/pages/` (`gro
 
 ## Auth
 
-Centralized in `src/middleware.js`:
+Centralized in `src/middleware.ts` (runs in the Cloudflare Workers runtime):
 
 1. Public routes bypass check: `/`, `/about`, `/auth/*`, `/api/auth/*`, static assets (note: `/about` is in the public list but no such page exists yet)
 2. All other routes require a valid Supabase session via `supabase.auth.getUser()`
