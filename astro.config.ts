@@ -16,7 +16,6 @@ export default defineConfig({
 
   adapter: cloudflare({
     // The app doesn't use Astro's image pipeline; avoid provisioning an Images binding.
-    mode: 'directory',
     imageService: 'passthrough',
   }),
 
