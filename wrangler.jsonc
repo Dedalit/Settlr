@@ -1,18 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "settlr",
-  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-08-21",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS",
-    "not_found_handling": "404-page"
-  },
   "vars": {
-    // Public (publishable) keys — safe to commit. They are also inlined at build
-    // time by Astro via the git-tracked .env file.
-    "PUBLIC_SUPABASE_URL": "https://vwlwidbcbkpveusdnfmh.supabase.co",
+    "PUBLIC_SUPABASE_URL": "https://supabase.co",
     "PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_wLNHhrB8Qsgu9luxq2xdUQ_tbz_wqCA"
   }
 }
